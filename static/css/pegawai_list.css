@@ -1,0 +1,67 @@
+.pegawai-table {
+    border: 1px solid #ccc;
+}
+
+.pegawai-table th,
+.pegawai-table td {
+    border: 1px solid #ccc;
+    padding: 8px 12px;
+    width: 200px;
+    word-wrap: break-word;
+    white-space: normal;
+    vertical-align: top;
+}
+
+.pegawai-table th {
+    background-color: #f9fafb;
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+}
+
+.pegawai-table th.sortable::after {
+    content: 'Up-Down';
+    font-size: 0.8em;
+    color: #888;
+    margin-left: 4px;
+}
+
+.pegawai-table th.sortable.sorted-asc::after {
+    content: 'Up';
+    color: #000;
+}
+
+.pegawai-table th.sortable.sorted-desc::after {
+    content: 'Down';
+    color: #000;
+}
+
+#pagination button {
+    padding: 6px 12px;
+    border: 1px solid #ddd;
+    background: white;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+#pagination button.active {
+    background-color: #3182ce;
+    color: white;
+    border-color: #3182ce;
+}
+
+#pagination button:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.controls input,
+.controls select {
+    min-width: 180 px;
+}
+
+.pegawai-table td {
+    white-space: normal;
+    line-height: 1.4;
+}
+

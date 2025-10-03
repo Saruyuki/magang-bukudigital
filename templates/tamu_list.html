@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Daftar Tamu{% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'css/tamu_list.css' %}">
+{% endblock  %}
+
+{% block page_title %}Daftar Tamu{% endblock  %}
+
+{% block content %}
+    <div class="card">
+        <div class="tamu-table-container p-4">
+            <div class="controls mb-4 flex flex-wrap gap-4 items-center">
+                <input type="text" id="searchInput" placeholder="Cari..." class="search-input border rounded px-3 py-1">
+
+                <select id="filterColumn" class="border rounded px-3 py-1">
+                    <option value=""> Filter berdasarkan kolom</option>
+                    <option value="instansi">Instansi</option>
+                    <option value="nama">Nama</option>
+                    <option value="provinsi">Provinsi</option>
+                    <option value="keperluan">Keperluan</option>
+                    <option value="tanggal_kunjungan">Tanggal Kunjungan</option>
+                </select>
+            </div>
+
+            <table id='tamuTable' class="tamu-table border-collapse w-full text-left">
+                <thead>
+                    <tr>
+                        <th data-column="instansi" class="sortable">Instansi</th>
+                        <th data-column="nama" class="sortable">Nama</th>
+                        <th data-column="provinsi" class="sortable">Provinsi</th>
+                        <th data-column="kota" class="sortable">Kabupaten/Kota</th>
+                        <th data-column="keperluan" class="sortable">Keperluan</th>
+                        <th data-column="tanggal_kunjungan" class="sortable">Tanggal Kunjungan</th>
+                    </tr>
+                </thead>
+                <tbody id="tamuTableBodyFull" class="hidden">
+                    {% for tamu in tamu_list %}
+                        <tr>
+                            <td>{{ tamu.instansi }}</td>
+                            <td>{{ tamu.nama }}</td>
+                            <td>{{ tamu.provinsi }}</td>
+                            <td>{{ tamu.kota }}</td>
+                            <td>{{ tamu.keperluan }}</td>
+                            <td>{{ tamu.tanggal_kunjungan|date:"Y-m-d" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="3">Tidak ada data tamu.</td></tr>
+                    {% endfor %}
+                </tbody>
+
+                <tbody id="tamuTableBody">
+                
+                </tbody>
+            </table>
+
+            <div id="pagination-controls">
+                View
+                <select id="rowsPerPageSelect">
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                    <option value="20" selected>20</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                    <option value="all">All</option>
+                </select>
+                from <span id="totalRecords">0</span> records
+            </div>
+
+            <div id="pagination" class="pagination mt-4 flex justify-end gap-2"></div>
+        </div>
+    </div>
+{% endblock  %}
+
+{% block extra_script %}
+    <script src="{% static "js/tamu_list.js" %}"></script> 
+{% endblock  %}
+

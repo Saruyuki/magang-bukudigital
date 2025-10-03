@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Daftar Pegawai{% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static "css/pegawai_list.css" %}">
+{% endblock  %}
+
+{% block page_title %}Daftar Pegawai{% endblock  %}
+
+{% block content %}
+    <div class="pegawai-table-container p-4">
+        <div class="controls mb-4 flex flex-wrap gap-4 items-center">
+            <input type="text" id="searchInput" placeholder="Cari..." class="search-input border rounded px-3 py-1">
+
+            <select id="filterColumn" class="border rounded px-3 py-1">
+                <option value=""> Filter berdasarkan kolom</option>
+                <option value="nama">Nama</option>
+                <option value="jabatan">Jabatan</option>
+                <option value="tanggal_masuk">Tanggal Masuk</option>
+            </select>
+
+            <input type="text" id="filterInput" placeholder="Filter" class="border rounded px-3 py-1" disabled>
+        </div>
+
+        <table id='pegawaiTable' class="pegawai-table border-collapse w-full text-left">
+            <thead>
+                <tr>
+                    <th data-column="nama" class="sortable">Nama</th>
+                    <th data-column="jabatan" class="sortable">Jabatan</th>
+                    <th data-column="agenda" class="sortable">Agenda</th>
+                    <th data-column="tanggal_masuk" class="sortable">Tanggal Masuk</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pegawai in pegawai_list %}
+                    <tr>
+                        <td>{{ pegawai.nama }}</td>
+                        <td>{{ pegawai.jabatan }}</td>
+                        <td>{{ pegawai.agenda }}</td>
+                        <td>{{ pegawai.tanggal_masuk|date:"Y-m-d" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="3">Tidak ada data pegawai.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div id="pagination" class="pagination mt-4 flex justify-end gap-2"></div>
+    </div>
+{% endblock  %}
+
+{% block extra_script %}
+    <script src="{% static "js/pegawai_list.js" %}"></script> 
+{% endblock  %}
+
