@@ -1,0 +1,109 @@
+.card {
+    background: white;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    text-align: center;
+    z-index: 1;
+    padding-bottom: 5rem ;
+}
+
+.pengurus-table {
+    border: 1px solid #ccc;
+}
+
+.pengurus-table th,
+.pengurus-table td {
+    border: 1px solid #ccc;
+    padding: 8px 12px;
+    width: 200px;
+    word-wrap: break-word;
+    white-space: normal;
+    vertical-align: top;
+}
+
+.pengurus-table th {
+    background-color: #f9fafb;
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+}
+
+.pengurus-table th.sortable::after {
+    content: '\2191-\2193';
+    font-size: 0.8em;
+    color: #888;
+    margin-left: 4px;
+}
+
+.pengurus-table th.sortable.sorted-asc::after {
+    content: '\2191';
+    color: #000;
+}
+
+.pengurus-table th.sortable.sorted-desc::after {
+    content: '\2193';
+    color: #000;
+}
+
+#pagination {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: white;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    display: flex;
+    justify-content: right;
+    gap: 10px;
+}
+
+#pagination button {
+    padding: 6px 12px;
+    border: 1px solid #ddd;
+    background: white;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+#pagination button.active {
+    background-color: #3182ce;
+    color: white;
+    border-color: #3182ce;
+}
+
+#pagination button:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+#pagination-controls {
+    text-align: left;
+    margin-top: 1rem;
+    font-size: 1rem;
+}
+
+#pagination-controls select {
+    border: 1px solid #000;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-weight: normal;
+}
+
+#pagination-controls #totalRecords {
+    font-weight: bold;
+    margin-left: 0.25rem;
+}
+
+.controls input,
+.controls select {
+    min-width: 180 px;
+}
+
+.pengurus-table td {
+    white-space: normal;
+    line-height: 1.4;
+}
+

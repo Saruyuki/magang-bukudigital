@@ -1,5 +1,5 @@
 from django import forms
-from .models import Tamu, Pegawai
+from .models import Tamu, Pengurus
 from .utils import INDO_PROVINCES
 
 class TamuForm(forms.ModelForm):
@@ -29,9 +29,9 @@ class TamuForm(forms.ModelForm):
             'keperluan': 'Keperluan',
         }
         
-class PegawaiForm(forms.ModelForm):
+class PengurusForm(forms.ModelForm):
     class Meta:
-        model = Pegawai
+        model = Pengurus
         fields = ['nama', 'jabatan', 'agenda']
         widgets = {
             'nama': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nama Lengkap'}),

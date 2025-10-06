@@ -2,8 +2,8 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.hashers import make_password, check_password
 from django.utils.timezone import now
-from .forms import TamuForm, PegawaiForm
-from .models import Tamu, Pegawai
+from .forms import TamuForm, PengurusForm
+from .models import Tamu, Pengurus
 from .utils import categorize_keperluan, PROVINCE_ACRONYMS
 
 import pandas as pd
@@ -28,21 +28,21 @@ def tamu_form(request):
         form = TamuForm()
     return render(request, 'tamu_form.html', {'form': form})
 
-def pegawai_form(request):
+def pengurus_form(request):
     if request.method == 'POST':
-        form = PegawaiForm(request.POST)
+        form = PengurusForm(request.POST)
         if form.is_valid():
-            pegawai = form.save(commit=False)
+            pengurus = form.save(commit=False)
 
             try:
-                pegawai.save(commit=False)
-                return render(request, "pegawai_success.html")
+                pengurus.save(commit=False)
+                return render(request, "pengurus_success.html")
             except:
                 form.add_error('nama', 'Terjadi keasalahan saat menyimpan data')
                 
     else:
-        form = PegawaiForm()
-    return render(request, 'pegawai_form.html', {'form': form})
+        form = PengurusForm()
+    return render(request, 'pengurus_form.html', {'form': form})
 
 def login_view(request):
     if request.method == 'POST':
@@ -86,13 +86,13 @@ def admin_dashboard(request):
     keperluan_labels = list(banyak_keperluan.keys())
     keperluan_data = list(banyak_keperluan.values())
     
-    pegawai_today = Pegawai.objects.filter(tanggal_masuk__date=today)
-    pegawai_hari = pegawai_today.count()
+    pengurus_today = Pengurus.objects.filter(tanggal_masuk__date=today)
+    pengurus_hari = pengurus_today.count()
     
     return render(request, 'admin_dashboard.html', {
         'pengunjung_bulan': pengunjung_bulan,
         'pengunjung_hari': pengunjung_hari,
-        'pegawai_hari': pegawai_hari,
+        'pengurus_hari': pengurus_hari,
         'provinsi_labels': provinsi_labels_acronym,
         'provinsi_data': provinsi_data,
         'keperluan_labels': keperluan_labels,
@@ -110,10 +110,10 @@ def tamu_list_view(request):
     tamu_list = Tamu.objects.all().order_by('-tanggal_kunjungan')
     return render(request, 'tamu_list.html', {'tamu_list': tamu_list})
 
-def pegawai_list_view(request):
+def pengurus_list_view(request):
     if not request.session.get('admin_logged_in'):
         return redirect('login')
     
-    pegawai_list = Pegawai.objects.all().order_by('-tanggal_masuk')
-    return render(request, 'pegawai_list.html', {'pegawai_list': pegawai_list})
+    pengurus_list = Pengurus.objects.all().order_by('-tanggal_masuk')
+    return render(request, 'pengurus_list.html', {'pengurus_list': pengurus_list})
     

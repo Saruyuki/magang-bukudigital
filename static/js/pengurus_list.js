@@ -1,13 +1,15 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const table = document.getElementById('pegawaiTable');
-    const tbody = table.querySelector('tbody');
-    const rows = Array.from(tbody.querySelectorAll('tr'));
+    const table = document.getElementById('pengurusTable');
+    const fullTbody = document.getElementById('pengurusTableBodyFull');
+    const tbody = document.getElementById('pengurusTableBody');
+    const rows = Array.from(fullTbody.querySelectorAll('tr'));
     const paginationContainer = document.getElementById('pagination');
     const searchInput = document.getElementById('searchInput');
     const filterColumnSelect = document.getElementById('filterColumn');
-    const filterInput = document.getElementById('filterInput');
+    const rowsPerPageSelect = document.getElementById('rowsPerPageSelect');
+    const totalRecordsSpan = document.getElementById('totalRecords');
 
-    const rowsPerPage = 20;
+    const rowsPerPage = rowsPerPageSelect.valur === 'all' ? Infinity : parseInt(rowsPerPageSelect.value, 10);
     let currentPage = 1;
     let currentSort = { column: null, direction: null};
     let filteredRows =[...rows];
@@ -49,9 +51,11 @@ document.addEventListener('DOMContentLoaded', () => {
             tr.appendChild(td);
             tbody.appendChild(tr);
             return;
+        } else {
+            pageRows.forEach(row => tbody.appendChild(row.cloneNode(true)));
         }
 
-        pageRows.forEach(row => tbody.appendChild(row));
+        updateTotalRecords();
         renderPagination();
     }
 
@@ -131,18 +135,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     filterColumnSelect.addEventListener('change', () => {
-        if (filterColumnSelect.value) {
-            filterInput.disabled = false;
-            filterInput.value = '';
-            filterInput.focus();
-        } else {
-            filterInput.disabled = true;
-            filterInput.value = '';
-        }
-        applyFilter();
-    });
-
-    filterInput.addEventListener('input', () => {
         applyFilter();
     });
 
@@ -151,25 +143,21 @@ document.addEventListener('DOMContentLoaded', () => {
     })
 
     function applyFilter() {
-        let tempRows = [...rows];
-
         const searchTerm = searchInput.value.trim().toLowerCase();
-        if (searchTerm) {
-            tempRows = tempRows.filter(row => {
-                return Array.from(row.cells).some(td => td.innerText.toLowerCase().includes(searchTerm));
-            });
-        }
-
         const filterCol = filterColumnSelect.value;
-        const filterVal = filterInput.value.trim().toLowerCase();
-        if (filterCol && filterVal) {
-            tempRows = tempRows.filter(row => {
-                const cellVal = getCellValue(row, filterCol);
-                return cellVal.includes(filterVal);
-            });
-        }
 
-        filteredRows = tempRows;
+        if (!searchTerm) {
+            filteredRows = [...rows];
+        } else if (!filterCol) {
+            filteredRows = rows.filter(row => {
+                return Array.from(row.cells).some(td => td.innerText.toLowerCase().includes(searchTerm));
+            }); 
+        } else {
+            filteredRows = rows.filter(row => { 
+                const cellVal = getCellValue(row, filterCol);
+                return cellVal.includes(searchTerm);
+            })
+        }
 
         if (currentSort.column) {
             sortRows(currentSort.column, currentSort.direction);
@@ -178,6 +166,17 @@ document.addEventListener('DOMContentLoaded', () => {
         currentPage = 1;
         renderTable();
     }
+
+    function updateTotalRecords() {
+        totalRecordsSpan.textContent = filteredRows.length;
+    }
+
+    rowsPerPageSelect.addEventListener('change', () => {
+        const value = rowsPerPageSelect.value;
+        rowsPerPage = value === 'all' ? filteredRows.length : parseInt (value, 10);
+        currentPage = 1;
+        renderTable();
+    })
 
     renderTable();
 })
