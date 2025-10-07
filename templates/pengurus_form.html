@@ -1,35 +1,33 @@
+{% extends "base_form.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <title>Buku Tamu Digital KONI</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" />
-    <link rel="stylesheet" href="{% static 'css/pengurus_form.css' %}">
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
-    <script>
-    </script>
-</head>
-<body>
-    <div class="container mt-5">
-        <h2 class="mb-4">Buku Pengurus Digital KONI</h2>
-        <form action="{% url 'pengurus_submit' %}" method="post">
-            {% csrf_token %}
-            {{form.non_field_errors}}
-            {% for field in form %}
-                <div class="form-group">
-                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                    {{ field }}
-                    {% if field.errors %}
-                        <div class="text-danger">{{ field.errors }}</div>
-                    {% endif %}
-                </div>
-            {% endfor %}
+{% block title %}Absen Pengurus KONI{% endblock %}
+
+{% block extra_head %} 
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    
+    <link rel="stylesheet" href="{% static 'css/pengurus_form.css' %}">
+{% endblock %}
+
+{% block form_title %}Buku Pengurus Digital KONI{% endblock %}
+
+{% block form_content %}
+    <form action="{% url 'pengurus_submit' %}" method="post" class="space-y-4">
+        {% csrf_token %}
+        {{form.non_field_errors}}
+
+        {% for field in form %}
+            <div class="mb-4">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+
+                {% if field.errors %}
+                    <div class="text-red-500">{{ field.errors|striptags }}</div>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <div class="text-center mt-4">
             <button type="submit" class="btn btn-primary">Kirim</button>
-        </form>
-    </div>
-</body>
-</html>
+        </div>
+    </form>
+{% endblock %}

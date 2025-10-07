@@ -5,6 +5,7 @@ urlpatterns = [
     path('', views.admin_dashboard, name='admin_dashboard'),
     path('tamu/', views.tamu_form, name='tamu_form'),
     path('tamu/submit/', views.tamu_form, name='tamu_submit'),
+    path('tamu_legacy/', views.tamu_legacy, name="tamu_legacy"),    
     path('pengurus/', views.pengurus_form, name='pengurus_form'),
     path('pengurus/submit/', views.pengurus_form, name='pengurus_submit'),
     path('login/', views.login_view, name='login'),

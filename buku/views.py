@@ -28,6 +28,22 @@ def tamu_form(request):
         form = TamuForm()
     return render(request, 'tamu_form.html', {'form': form})
 
+def tamu_legacy(request):
+    if request.method == 'POST':
+        form = TamuForm(request.POST)
+        if form.is_valid():
+            tamu = form.save(commit=False)
+                      
+            try:
+                tamu.save(commit=False)
+                return render(request, "tamu_success.html")
+            except:
+                form.add_error('nama', 'Terjadi kesalahan saat menyimpan data')
+                
+    else:
+        form = TamuForm()
+    return render(request, 'tamu_form_legacy.html', {'form': form})
+
 def pengurus_form(request):
     if request.method == 'POST':
         form = PengurusForm(request.POST)

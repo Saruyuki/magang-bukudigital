@@ -1,42 +1,46 @@
-body {
-    background: linear-gradient(to right, #6a11cb, #2575fc);
-    color: white;
-    font-family: Arial, sans-serif;
-}
-
-.container {
-    margin-top: 50px;
-    background-color: rgba(255, 255, 255, 0.2);
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-}
-
-.form-group label {
+label {
     font-weight: bold;
+    color: black;
+    display: block;
+    margin-bottom: 6px;
 }
 
-.form-control,
-.select2-container .select2-selection--single {
-    height: 45px;
-    padding: 10px 12px;
+input[type="text"],
+textarea {
+    width: 100%;
+    padding: 10px 12px !important;
     font-size: 16px;
     border-radius: 5px;
     box-sizing: border-box;
+    border: 1px solid #ced4da;
+    color: #333 !important;
+    background-color: white;
 }
 
-.select2-container .select2-selection--single .select2-selection__rendered {
-    line-height: 45px;
+textarea {
+    height: auto;
+    resize: vertical;
 }
 
-.select2-container .select2-selection--single{
-    display: flex;
-    align-items: center;
+.text-error {
+    color: #f87171;
+    font-size: 0.875rem;
+    margin-top: 4px;
 }
 
-.select2-container .select2-results__option {
-    background-color: #ffffff; ;
-    color: #000000;
+button[type="submit"] {
+    background-color: #3182ce;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    border: none;
+    cursor: pointer;
+}
+
+button[type="submit"]:hover {
+    background-color: #3c5282;
 }
 
 .select2-container--default .select2-selection--single{
@@ -60,6 +64,11 @@ body {
     top: 0;
     display: flex;
     align-items: center;
+}
+
+.select2-container--default .select2-results__option {
+    color: #000 !important;
+    background-color: white;
 }
 
 .select2-container--default .select2-results__option--highlighted[aria-selected] {
