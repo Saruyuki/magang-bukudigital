@@ -70,9 +70,11 @@ button[type="submit"]:hover {
     align-items: center;
 }
 
-.select2-container--default .select2-results__option {
+.select2-container--default .select2-results__option,
+.select2-container--default .select2-search--dropdown .select2-search__field {
     color: #000 !important;
     background-color: white;
+    caret-color: #000;
 }
 
 .select2-container--default .select2-results__option--highlighted[aria-selected] {

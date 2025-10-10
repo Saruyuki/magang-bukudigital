@@ -8,7 +8,7 @@ PROVINCE_NAMES = [
     'Papua Tengah', 'Papua Pegunungan', 'Papua Selatan', 'Papua Barat Daya'
 ]
 
-INDO_PROVINCES = [(prov, 'Provinsi ' + prov) for prov in PROVINCE_NAMES]
+INDO_PROVINCES = [(prov, prov) for prov in PROVINCE_NAMES]
 
 PROVINCE_ACRONYMS = {
     'Nanggroe Aceh Darussalam' : 'Aceh',
@@ -60,7 +60,7 @@ KEPERLUAN_CATEGORIES = {
     'Kunjungan Kerja': ['kerja', 'meeting', 'rapat', 'bisnis', 'proyek', 'dinas'],
     'Kunjungan Pribadi': ['pribadi', 'teman', 'keluarga', 'sosial', 'silaturahmi'],
     'Pengiriman Barang': ['pengiriman', 'barang', 'paket', 'logistik', 'kurir'],
-    'Laynanan Umum': ['umum', 'layanan', 'informasi', 'bantuan', 'konsultasi'],
+    'Layanan Umum': ['umum', 'layanan', 'informasi', 'bantuan', 'konsultasi'],
     'Kunjungan Resmi': ['resmi', 'pemerintah', 'delegasi', 'diplomatik', 'kunjungan'],
     'Pertemuan' : ['pertemuan', 'diskusi', 'seminar', 'workshop', 'pelatihan'],
     'Lainnya': []

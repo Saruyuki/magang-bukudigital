@@ -20,5 +20,8 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("__reload__/", include("django_browser_reload.urls")),
-    path('', include('buku.urls')),
+    path('', include('dashboard.urls')),
+    path('tamu/', include('buku.urls')),
+    path('pengurus/', include('kehadiran.urls')),
+    
 ]

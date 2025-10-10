@@ -8,20 +8,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Form{% endblock %}</title>
     <script src="https://cdn.tailwindcss.com"></script>
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{% static 'js/form_submit.js' %}"></script>
     
     <link rel="stylesheet" href="{% static "css/base_form.css" %}">
 
     {% block extra_head %}{% endblock %}
 </head>
 
-<body class="bg-gradient-to-r from-purple-700 to-blue-500 min-h-screen flex items-center justify-center">
-    <div class="w-full md:w-1/2 px-4">
-        <div class="bg-white p-5 rounded-lg shadow-md w-full">
-            <h2 class="text-2xl font-semibold text-center text-gray-700 mb-6">
-                {% block form_title %}Form Title{% endblock %}
-            </h2>
-            {% block form_content %}{% endblock %}
+<body class="bg-gradient-to-r from-purple-700 to-blue-500 min-h-screen">
+    <div class="flex items-center justify-center min-h-screen">
+        <div class="w-full md:w-1/2 px-4">
+            <div class="bg-white p-5 rounded-lg shadow-md w-full">
+                <h2 class="text-2xl font-semibold text-center text-gray-700 mb-6">
+                    {% block form_title %}Form Title{% endblock %}
+                </h2>
+                {% block form_content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+
+    <div id="successModal">
+        <div class="modal-content">
+            <p> Form submmitted successfully!</p>
+            <button id="modalOkBtn">OK</button>
         </div>
     </div>
 

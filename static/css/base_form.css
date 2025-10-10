@@ -10,3 +10,42 @@ h2 {
     font-weight: bold;
     text-align: center;
 }
+
+.modal-content {
+    background: white;
+    color: black;
+    padding: 2rem 3rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+}
+
+#modalOkBtn {
+    margin-top: 1.5rem;
+    padding: 0.6rem 1.2rem;
+    background-color: #3182ce;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#modalOkBtn:hover {
+    background-color: #3c5282;
+}
+
+#successModal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
