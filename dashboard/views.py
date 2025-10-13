@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.utils.timezone import now
 from buku.models import Tamu
-from kehadiran.models import Pengurus
+from kehadiran.models import Kehadiran
 from .utils import categorize_keperluan, PROVINCE_ACRONYMS
 
 import pandas as pd
@@ -23,21 +23,28 @@ def admin_dashboard(request):
     
     pengunjung_bulan = len(df_tamu) if not df_tamu.empty else 0
     pengunjung_hari = len(df_tamu_today) if not df_tamu_today.empty else 0
-    
-    provinsi_terbanyak = df_tamu['provinsi'].value_counts().to_dict()
-    provinsi_labels = list(provinsi_terbanyak.keys())
-    provinsi_data = list(provinsi_terbanyak.values())
-    
-    provinsi_labels_acronym = [PROVINCE_ACRONYMS.get(prov, prov) for prov in provinsi_labels]
-    
+        
+    provinsi_labels_acronym = []
+    provinsi_data = []
+    keperluan_labels = []
+    keperluan_data = []
+        
     if not df_tamu.empty:
-        df_tamu['keperluan_kategori'] = df_tamu['keperluan'].apply(lambda x: categorize_keperluan(x))
-        banyak_keperluan = df_tamu['keperluan_kategori'].value_counts().to_dict()        
+        if 'provinsi' in df_tamu.columns:
+            provinsi_terbanyak = df_tamu['provinsi'].value_counts().to_dict()
+            provinsi_labels = list(provinsi_terbanyak.keys())
+            provinsi_data = list(provinsi_terbanyak.values())
+            
+            provinsi_labels_acronym = [PROVINCE_ACRONYMS.get(prov, prov) for prov in provinsi_labels]
+        
+        if 'keperluan' in df_tamu.columns:
+            df_tamu['keperluan_kategori'] = df_tamu['keperluan'].apply(lambda x: categorize_keperluan(x))
+            banyak_keperluan = df_tamu['keperluan_kategori'].value_counts().to_dict()        
       
-    keperluan_labels = list(banyak_keperluan.keys())
-    keperluan_data = list(banyak_keperluan.values())
+            keperluan_labels = list(banyak_keperluan.keys())
+            keperluan_data = list(banyak_keperluan.values())
     
-    pengurus_today = Pengurus.objects.filter(tanggal_masuk__date=today)
+    pengurus_today = Kehadiran.objects.filter(tanggal_masuk__date=today)
     pengurus_hari = pengurus_today.count()
     
     return render(request, 'admin_dashboard.html', {
@@ -61,6 +68,6 @@ def pengurus_list_view(request):
     if not request.session.get('admin_logged_in'):
         return redirect('login')
     
-    pengurus_list = Pengurus.objects.all().order_by('-tanggal_masuk')
+    pengurus_list = Kehadiran.objects.all().order_by('-tanggal_masuk')
     return render(request, 'pengurus_list.html', {'pengurus_list': pengurus_list})
     

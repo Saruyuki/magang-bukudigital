@@ -4,15 +4,13 @@
 {% block title %}Absen Pengurus KONI{% endblock %}
 
 {% block extra_head %} 
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    
-    <link rel="stylesheet" href="{% static 'css/pengurus_form.css' %}">
+    <link rel="stylesheet" href="{% static 'css/kehadiran_form.css' %}">
 {% endblock %}
 
-{% block form_title %}Buku Pengurus Digital KONI{% endblock %}
+{% block form_title %}Absensi Pengurus Digital KONI{% endblock %}
 
 {% block form_content %}
-    <form action="{% url 'pengurus_submit' %}" method="post" class="space-y-4">
+    <form action="{% url 'kehadiran_submit' %}" method="post" class="space-y-4 ajax-submit">
         {% csrf_token %}
         {{form.non_field_errors}}
 
@@ -27,7 +25,7 @@
             </div>
         {% endfor %}
         <div class="text-center mt-4">
-            <button type="submit" class="btn btn-primary">Kirim</button>
+            <button type="submit">Kirim</button>
         </div>
     </form>
 {% endblock %}

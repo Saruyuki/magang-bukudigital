@@ -1,19 +1,29 @@
 from django.shortcuts import render
-from .forms import PengurusForm
+from django.http import JsonResponse
+from .forms import KehadiranForm
 
 # Create your views here.
-def pengurus_form(request):
+def kehadiran_form(request):
     if request.method == 'POST':
-        form = PengurusForm(request.POST)
+        form = KehadiranForm(request.POST, user=request.user)
         if form.is_valid():
-            pengurus = form.save(commit=False)
+            kehadiran = form.save(commit=False)
+            
+            kehadiran.nama = request.user.nama
+            kehadiran.jabatan = request.user.jabatan
 
             try:
-                pengurus.save(commit=False)
-                return render(request, "pengurus_success.html")
-            except:
-                form.add_error('nama', 'Terjadi keasalahan saat menyimpan data')
+                kehadiran.save(commit=False)
+                return JsonResponse({'success': True})
+            except Exception as e:
+                print(f"Error saving kehadiran: {e}")
+                return JsonResponse({'success': False, 'error': 'Terjadi kesalahan saat menyimpan data'})
+                
+        else:
+            errors = form.errors.as_json()
+            return JsonResponse({'success': False, 'errors': errors})
                 
     else:
-        form = PengurusForm()
-    return render(request, 'pengurus_form.html', {'form': form})
+        form = KehadiranForm(user=request.user)
+        
+    return render(request, 'kehadiran_form.html', {'form': form})

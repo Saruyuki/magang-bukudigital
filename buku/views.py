@@ -1,14 +1,11 @@
 from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from django.contrib.auth.hashers import make_password, check_password
 from django.http import JsonResponse
 
 from .forms import TamuForm
 
 # Create your views here.
-ADMIN_USERNAME = 'admin'
-ADMIN_PASSWORD_HASH = make_password('admin123')
-
 def tamu_form(request):
     if request.method == 'POST':
         form = TamuForm(request.POST)
@@ -33,12 +30,13 @@ def login_view(request):
         username = request.POST.get('username')
         password = request.POST.get('password')
         
-        if username == ADMIN_USERNAME and check_password(password, ADMIN_PASSWORD_HASH):
-            request.session['admin_logged_in'] = True
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
             return redirect('admin_dashboard')
         else:
-            messages.error(request, 'Invalid username or password.')
-            
+            messages.error(request, 'Username atau password salah.')
+        
     return render(request, 'login.html')
     
 def logout_view(request):

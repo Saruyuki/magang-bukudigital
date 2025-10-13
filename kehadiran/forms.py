@@ -1,13 +1,13 @@
 from django import forms
-from .models import Pengurus
+from .models import Kehadiran
         
-class PengurusForm(forms.ModelForm):
+class KehadiranForm(forms.ModelForm):
     class Meta:
-        model = Pengurus
+        model = Kehadiran
         fields = ['nama', 'jabatan', 'agenda']
         widgets = {
-            'nama': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nama Lengkap'}),
-            'jabatan': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Jabatan'}),
+            'nama': forms.TextInput(attrs={'class': 'form-control', 'readonly': 'readonly'}),
+            'jabatan': forms.TextInput(attrs={'class': 'form-control', 'readonly': 'readonly'}),
             'agenda': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Agenda Anda', 'rows': 3}),
         }
         labels = {
@@ -15,3 +15,10 @@ class PengurusForm(forms.ModelForm):
             'jabatan': 'Jabatan',
             'agenda': 'Agenda',
         }
+        
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+        if user:
+            self.fields['nama'].initial = user.nama
+            self.fields['jabatan'].initial = user.jabatan
