@@ -1,13 +1,13 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const table = document.getElementById('suratTable');
-    const fullTbody = document.getElementById('suratTableBodyFull');
-    const tbody = document.getElementById('suratTableBody');
-    
+    const table = document.getElementById('listTable');
+    const fullTbody = document.getElementById('listTableBodyFull');
+    const tbody = document.getElementById('listTableBody');
+
     if (!table || !fullTbody || !tbody) {
         console.warn("⚠️ suratTableBodyFull or table not found in DOM.");
         return;
     }
-    
+
     const rows = Array.from(fullTbody.querySelectorAll('tr'));
     const paginationContainer = document.getElementById('pagination');
     const searchInput = document.getElementById('searchInput');
@@ -15,12 +15,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const rowsPerPageSelect = document.getElementById('rowsPerPageSelect');
     const totalRecordsSpan = document.getElementById('totalRecords');
 
-    const rowsPerPage = rowsPerPageSelect.value === 'all' ? Infinity : parseInt(rowsPerPageSelect.value, 10);
+    let rowsPerPage = rowsPerPageSelect.value === 'all' ? Infinity : parseInt(rowsPerPageSelect.value, 10);
     let currentPage = 1;
     let currentSort = { column: null, direction: null};
     let filteredRows =[...rows];
 
-    console.log(`✅ surat_list.js initialized with ${rows.length} rows`);
+    console.log(`✅ table_list.js initialized with ${rows.length} rows`);
 
     function getCellValue(row, column) {
         const headers = Array.from(table.querySelectorAll('thead th'));
@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
             let valA = getCellValue(a, column);
             let valB = getCellValue(b, column);
 
-            if (column === 'tanggal_kunjungan') {
+            if (['tanggal_kunjungan', 'created_at', 'tanggal_kegiatan', 'tanggal_masuk'].includes(column)) {
                 valA = Date.parse(valA);
                 valB = Date.parse(valB);
             }
@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
         tbody.innerHTML = '';
 
         const start = (currentPage - 1) * rowsPerPage;
-        const end = start + rowsPerPage;
+        const end = rowsPerPage === Infinity ? filteredRows.length : start + rowsPerPage;
         const pageRows = filteredRows.slice(start, end);
         
         if (pageRows.length === 0) {
@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             pageRows.forEach(row => tbody.appendChild(row.cloneNode(true)));
         }
-
+    
         updateTotalRecords();
         renderPagination();
     }
@@ -137,7 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
             filteredRows = [...rows];
             return;
         }
-        filteredRows = row.filter(row => {
+        filteredRows = rows.filter(row => {
             return Array.from(row.cells).some(td => td.innerText.toLowerCase().includes(searchTerm));
         });
     }
@@ -187,4 +187,52 @@ document.addEventListener('DOMContentLoaded', () => {
     })
 
     renderTable();
+
+    document.addEventListener('click', async (e) => {
+        const row = e.target.closest('tr[data-id]');
+        if (!row) return;
+        const suratId = row.dataset.id;
+
+        if (e.target.classList.contains('show-btn')) {
+            const fileUrl = e.target.dataset.file;
+            if (fileUrl) window.open(fileUrl, '_blank');
+        }
+
+        if (e.target.classList.contains('edit-btn')) {
+            const currentNo = row.cells[0].innerText.trim();
+            const newNo = prompt("Edit Nomor Surat:", currentNo);
+            if (!newNo || newNo === currentNo) return;
+
+            const res = await fetch(`/surat/${suratId}/edit`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRDToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `no_surat=${encodeURIComponent(newNo)}`
+            });
+            const data = await res.json();
+            if (data.success) {
+                row.cells[0].innerText = data.no_surat;
+                alert('Nomor surat berhasil diperbarui');
+            } else {
+                alert(data.error || 'Gagal memperbarui no surat.');
+            }
+        }
+
+        if (e.target.classList.contains('delete-btn')) {
+            if (!confirm ("Hapus Surat Ini?")) return;
+            const res = await fetch(`/surat/${suratId}/delete`, {
+                method: 'POST',
+                headers: { 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value },
+            });
+            const data = await res.json()
+            if (data.success) {
+                row.remove();
+                alert('Surat berhasil dihapus.');
+            } else {
+                alert('Gagal menghapus surat.');
+            }
+        }
+    });
 })

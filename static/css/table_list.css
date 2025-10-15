@@ -8,12 +8,12 @@
     padding-bottom: 5rem ;
 }
 
-.tamu-table {
+.list-table {
     border: 1px solid #ccc;
 }
 
-.tamu-table th,
-.tamu-table td {
+.list-table th,
+.list-table td {
     border: 1px solid #ccc;
     padding: 8px 12px;
     width: 200px;
@@ -22,26 +22,26 @@
     vertical-align: top;
 }
 
-.tamu-table th {
+.list-table th {
     background-color: #f9fafb;
     cursor: pointer;
     user-select: none;
     position: relative;
 }
 
-.tamu-table th.sortable::after {
+.list-table th.sortable::after {
     content: '\2191-\2193';
     font-size: 1em;
     color: #888;
     margin-left: 4px;
 }
 
-.tamu-table th.sortable.sorted-asc::after {
+.list-table th.sortable.sorted-asc::after {
     content: '\2191';
     color: #000;
 }
 
-.tamu-table th.sortable.sorted-desc::after {
+.list-table th.sortable.sorted-desc::after {
     content: '\2193';
     color: #000;
 }
@@ -102,7 +102,7 @@
     min-width: 180 px;
 }
 
-.tamu-table td {
+.list-table td {
     white-space: normal;
     line-height: 1.4;
 }

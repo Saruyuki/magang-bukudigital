@@ -10,4 +10,7 @@ urlpatterns = [
     path('surat/upload/', views.surat_upload_view, name='upload_surat'),
     path('surat/debug/', views.surat_debug_pdfplumber, name='surat_debug_pdfplumber'),
     path('surat/debug/view/', views.surat_debug_page, name='surat_debug_page'),
+    path('surat/<int:surat_id>/delete', views.surat_delete_view, name='delete_surat'),
+    path('surat/<int:surat_id>/edit', views.surat_edit_view, name='edit_surat'),
+    path('surat/<int:surat_id>/show', views.surat_show_view, name='show_surat'),
 ]

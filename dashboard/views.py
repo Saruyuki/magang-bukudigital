@@ -1,7 +1,10 @@
 from django.contrib.auth.decorators import  user_passes_test
+from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_exempt
 from django.utils.timezone import now
-from django.shortcuts import render, redirect
-from django.http import JsonResponse
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import JsonResponse, HttpResponse
+from django.db import transaction
 
 from datetime import timedelta
 
@@ -115,58 +118,76 @@ def surat_upload_view(request):
     if not surat_data or not surat_data['no_surat']:
         return JsonResponse({'success': False, 'error': 'Gagal membaca format surat'})
     
-    start = surat_data.get('start_date')
-    end = surat_data.get('end_date')
-    json_ready = {
-        **surat_data,
-        'start_date': start.strftime('%Y-%m-%d') if start else None,
-        'end_date': end.strftime('%Y-%m-%d') if end else None,
-    }
-    
     if request.GET.get('preview') == 'true':
-        return JsonResponse({'success': True, 'mode': 'preview', 'parsed': json_ready})
+        return JsonResponse({'success': True, 'mode': 'preview', 'parsed': surat_data})
     
-    file.seek(0)
-    
-    print("Current user:", request.user, request.user.is_authenticated)
-    
-    surat = Surat.objects.create(
-        no_surat=surat_data['no_surat'],
-        file=file,
-        uploaded_by=request.user
-    )    
-    
-    start = surat_data['start_date']
-    end = surat_data['end_date']
-    pengurus = surat_data['pengurus']
-    tujuan = surat_data['tujuan']
-    agenda = surat_data['agenda']
-    
-    print("Parsed Data:", surat_data)
-    print("Creating Kunjungan between", start, 'and', end)
-    print("Pengurus:", pengurus)
-    
-    created_count = 0
-    if start and end and pengurus:
-        for offset in range((end - start).days + 1):
-            tanggal = start + timedelta (days=offset)
-            for nama, jabatan in pengurus:
-                user = CustomUser.objects.filter(nama__iexact=nama).first()
-                if not user:
-                    continue
-                Kunjungan.objects.create(
-                    surat=surat,
-                    user=user,
-                    no_surat=surat_data['no_surat'],
-                    nama=nama,
-                    jabatan=jabatan,
-                    tujuan=tujuan,
-                    agenda=agenda,
-                    tanggal_kegiatan=tanggal
-                )
-                created_count += 1
-                
-    return JsonResponse({'success': True, 'created': created_count})
+    try :
+        with transaction.atomic():
+            surat = Surat.objects.create(
+                no_surat=surat_data['no_surat'],
+                file=file,
+                uploaded_by=request.user
+            )
+
+        start = surat_data['start_date']
+        end = surat_data['end_date']
+        pengurus = surat_data['pengurus']
+        tujuan = surat_data['tujuan']
+        agenda = surat_data['agenda']
+        
+        print("Parsed Data:", surat_data)
+        print("Creating Kunjungan between", start, 'and', end)
+        print("Pengurus:", pengurus)
+        
+        created_count = 0
+        if start and end and pengurus:
+            for offset in range((end - start).days + 1):
+                tanggal = start + timedelta (days=offset)
+                for nama, jabatan in pengurus:
+                    user = CustomUser.objects.filter(nama__iexact=nama).first()
+                    if not user:
+                        continue
+                    Kunjungan.objects.create(
+                        surat=surat,
+                        user=user,
+                        no_surat=surat_data['no_surat'],
+                        nama=nama,
+                        jabatan=jabatan,
+                        tujuan=tujuan,
+                        agenda=agenda,
+                        tanggal_kegiatan=tanggal
+                    )
+                    created_count += 1
+                    
+        return JsonResponse({'success': True, 'created': created_count})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': f'Kesalahan server: {e}'})
+
+@user_passes_test(is_admin)
+@require_POST
+def surat_delete_view(request, surat_id):
+    surat = get_object_or_404(Surat, id=surat_id)
+    surat.delete()
+    return JsonResponse({'success': True})
+
+@user_passes_test(is_admin)
+@require_POST
+def surat_edit_view(request, surat_id):
+    surat = get_object_or_404(Surat, id=surat_id)
+    new_no = request.POST.get('no_surat')
+    if not new_no:
+        return JsonResponse({'success': False, 'error': 'Nomor surat tidak boleh kosong'})
+    surat.no_surat = new_no
+    surat.save()
+    return JsonResponse({'success': True, 'no_surat': surat.no_surat})
+
+@user_passes_test(is_admin)
+def surat_show_view(request, surat_id):
+    surat = get_object_or_404(Surat, id=surat_id)
+    if not surat.file:
+        return HttpResponse("Tidak ada file diunggah", content_type="text/plain")
+    return redirect(surat.file.url)
+
     
 @user_passes_test(is_admin)
 def surat_debug_pdfplumber(request):

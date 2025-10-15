@@ -4,14 +4,14 @@
 {% block title %}Kehadiran Pengurus{% endblock %}
 
 {% block extra_head %}
-    <link rel="stylesheet" href="{% static "css/pengurus_list.css" %}">
+    <link rel="stylesheet" href="{% static "css/table_list.css" %}">
 {% endblock  %}
 
 {% block page_title %}Kehadiran Pengurus{% endblock  %}
 
 {% block content %}
     <div class="card">
-        <div class="pengurus-table-container p-4">
+        <div class="list-table-container p-4">
             <div class="controls mb-4 flex flex-wrap gap-4 items-center">
                 <input type="text" id="searchInput" placeholder="Cari..." class="search-input border rounded px-3 py-1">
 
@@ -25,7 +25,7 @@
                 </select>
             </div>
 
-            <table id='pengurusTable' class="pengurus-table border-collapse w-full text-left">
+            <table id='listTable' class="list-table border-collapse w-full text-left">
                 <thead>
                     <tr>
                         <th data-column="no_surat" class="sortable">No Surat</th>
@@ -36,7 +36,7 @@
                         <th data-column="tanggal_kegiatan" class="sortable">Tanggal Kegiatan</th>
                     </tr>
                 </thead>
-                <tbody id="pengurusTableBodyFull" class="hidden">
+                <tbody id="listTableBodyFull" class="hidden">
                     {% for kunjungan in kunjungan_list %}
                         <tr>
                             <td>{{ kunjungan.no_surat }}</td>
@@ -51,7 +51,7 @@
                     {% endfor %}
                 </tbody>
 
-                <tbody id="pengurusTableBody">
+                <tbody id="listTableBody">
 
                 </tbody>
             </table>
@@ -75,6 +75,6 @@
 {% endblock  %}
 
 {% block extra_script %}
-    <script src="{% static "js/pengurus_list.js" %}"></script> 
+    <script src="{% static "js/table_list.js" %}"></script> 
 {% endblock  %}
 

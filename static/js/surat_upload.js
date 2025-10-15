@@ -69,10 +69,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 </tr>`;
             
             const fullBody = document.getElementById('suratTableBodyFull');
-            fullBodyBody.insertAdjacentHTML('afterbegin', newRow);
+            fullBody.insertAdjacentHTML('afterbegin', newRow);
 
             if (typeof renderTable === 'function') {
-                renderTable();
+                renderTable()
             }
 
             setTimeout(() => {

@@ -4,7 +4,7 @@
 {% block title %}Daftar Surat Tugas{% endblock %}
 
 {% block extra_head %}
-    <link rel="stylesheet" href="{% static "css/surat_list.css" %}">
+    <link rel="stylesheet" href="{% static "css/table_list.css" %}">
     <script>
         window.currentUserName = "{{ request.user.nama|escapejs }}";
     </script>
@@ -14,7 +14,7 @@
 
 {% block content %}
     <div class="card">
-        <div class="surat-table-container p-4">
+        <div class="list-table-container p-4">
             <div class="controls mb-4 flex flex-wrap gap-4 items-center">
                 <input type="text" id="searchInput" placeholder="Cari..." class="search-input border rounded px-3 py-1">
 
@@ -29,7 +29,7 @@
                 </button>
             </div>
 
-            <table id='suratTable' class="surat-table border-collapse w-full text-left">
+            <table id='listTable' class="list-table border-collapse w-full text-left">
                 <thead>
                     <tr>
                         <th data-column="no_surat" class="sortable">No Surat</th>
@@ -38,20 +38,25 @@
                         <th data-column="jumlah_kehadiran" class="sortable">Jumlah Kehadiran</th>
                     </tr>
                 </thead>
-                <tbody id="suratTableBodyFull" class="hidden">
+                <tbody id="listTableBodyFull" class="hidden">
                     {% for surat in surat_list %}
-                        <tr>
+                        <tr data-id="{{ surat.id }}">
                             <td>{{ surat.no_surat }}</td>
                             <td>{{ surat.created_at|date:"Y-m-d H:i" }}</td>
                             <td>{{ surat.uploaded_by.nama }}</td>
                             <td>{{ surat.kunjungan.count }}</td>
+                            <td class="flex gap-2">
+                                <button class="show-btn text-blue-600" data-file="{{ surat.file.url }}">*Eye</button>
+                                <button class="edit-btn text-yellow-600">*Pencil</button>
+                                <button class="delete-btn text-red-600">*Trash</button>
+                            </td>
                         </tr>
                         {% empty %}
                         <tr><td colspan="3">Belum ada surat yang diunggah.</td></tr>
                     {% endfor %}
                 </tbody>
 
-                <tbody id="suratTableBody">
+                <tbody id="listTableBody">
 
                 </tbody>
             </table>
@@ -102,7 +107,7 @@
 {% endblock  %}
 
 {% block extra_script %}
-    <script src="{% static "js/surat_list.js" %}"></script>    
+    <script src="{% static "js/table_list.js" %}"></script>    
     <script src="{% static "js/surat_upload.js" %}"></script> 
 {% endblock  %}
 

@@ -4,14 +4,14 @@
 {% block title %}Daftar Tamu{% endblock %}
 
 {% block extra_head %}
-    <link rel="stylesheet" href="{% static 'css/tamu_list.css' %}">
+    <link rel="stylesheet" href="{% static 'css/table_list.css' %}">
 {% endblock  %}
 
 {% block page_title %}Daftar Tamu{% endblock  %}
 
 {% block content %}
     <div class="card">
-        <div class="tamu-table-container p-4">
+        <div class="list-table-container p-4">
             <div class="controls mb-4 flex flex-wrap gap-4 items-center">
                 <input type="text" id="searchInput" placeholder="Cari..." class="search-input border rounded px-3 py-1">
 
@@ -25,7 +25,7 @@
                 </select>
             </div>
 
-            <table id='tamuTable' class="tamu-table border-collapse w-full text-left">
+            <table id='listTable' class="list-table border-collapse w-full text-left">
                 <thead>
                     <tr>
                         <th data-column="instansi" class="sortable">Instansi</th>
@@ -36,7 +36,7 @@
                         <th data-column="tanggal_kunjungan" class="sortable">Tanggal Kunjungan</th>
                     </tr>
                 </thead>
-                <tbody id="tamuTableBodyFull" class="hidden">
+                <tbody id="listTableBodyFull" class="hidden">
                     {% for tamu in tamu_list %}
                         <tr>
                             <td>{{ tamu.instansi }}</td>
@@ -51,7 +51,7 @@
                     {% endfor %}
                 </tbody>
 
-                <tbody id="tamuTableBody">
+                <tbody id="listTableBody">
                 
                 </tbody>
             </table>
@@ -75,6 +75,6 @@
 {% endblock  %}
 
 {% block extra_script %}
-    <script src="{% static "js/tamu_list.js" %}"></script> 
+    <script src="{% static "js/table_list.js" %}"></script> 
 {% endblock  %}
 
