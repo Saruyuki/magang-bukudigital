@@ -1,7 +1,13 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const table = document.getElementById('pengurusTable');
-    const fullTbody = document.getElementById('pengurusTableBodyFull');
-    const tbody = document.getElementById('pengurusTableBody');
+    const table = document.getElementById('suratTable');
+    const fullTbody = document.getElementById('suratTableBodyFull');
+    const tbody = document.getElementById('suratTableBody');
+    
+    if (!table || !fullTbody || !tbody) {
+        console.warn("⚠️ suratTableBodyFull or table not found in DOM.");
+        return;
+    }
+    
     const rows = Array.from(fullTbody.querySelectorAll('tr'));
     const paginationContainer = document.getElementById('pagination');
     const searchInput = document.getElementById('searchInput');
@@ -13,6 +19,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentPage = 1;
     let currentSort = { column: null, direction: null};
     let filteredRows =[...rows];
+
+    console.log(`✅ surat_list.js initialized with ${rows.length} rows`);
 
     function getCellValue(row, column) {
         const headers = Array.from(table.querySelectorAll('thead th'));

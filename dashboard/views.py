@@ -1,12 +1,23 @@
-from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import  user_passes_test
 from django.utils.timezone import now
-from buku.models import Tamu
+from django.shortcuts import render, redirect
+from django.http import JsonResponse
+
+from datetime import timedelta
+
+from accounts.models import CustomUser
+from kunjunganKerja.models import Surat, Kunjungan
+
 from kehadiran.models import Kehadiran
-from .utils import categorize_keperluan, PROVINCE_ACRONYMS
+from buku.models import Tamu
+
+from .utils import categorize_keperluan, PROVINCE_ACRONYMS, parse_surat_tugas
 
 import pandas as pd
+import pdfplumber
 
-# Create your views here.
+def is_admin(user):
+    return user.is_authenticated and user.role == 'admin'
 
 def admin_dashboard(request):
     if not request.session.get('admin_logged_in'):
@@ -70,4 +81,128 @@ def pengurus_list_view(request):
     
     pengurus_list = Kehadiran.objects.all().order_by('-tanggal_masuk')
     return render(request, 'pengurus_list.html', {'pengurus_list': pengurus_list})
+
+def kunjungan_list_view(request):
+    if not request.session.get('admin_logged_in'):
+        return redirect('login')
     
+    kunjungan_list = Kunjungan.objects.all().order_by('-created_at')
+    return render(request, 'kunjungan_list.html', {'kunjungan_list': kunjungan_list})
+    
+@user_passes_test(is_admin)
+def surat_list_view(request):
+    surat_list = Surat.objects.all().order_by('-created_at')
+    return render(request, 'surat_list.html', {'surat_list': surat_list})
+
+@user_passes_test(is_admin)
+def surat_upload_view(request):
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'error': 'Invalid request method'})
+    
+    file = request.FILES['file']
+    if not file:
+        return JsonResponse({'success': False, 'error': 'File tidak ditemukan'})
+    
+    print(file.size)
+    
+    try: 
+        surat_data = parse_surat_tugas(file)
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': f'Gagal memproses file: {e}'})
+    
+    print(file.size)
+    
+    if not surat_data or not surat_data['no_surat']:
+        return JsonResponse({'success': False, 'error': 'Gagal membaca format surat'})
+    
+    start = surat_data.get('start_date')
+    end = surat_data.get('end_date')
+    json_ready = {
+        **surat_data,
+        'start_date': start.strftime('%Y-%m-%d') if start else None,
+        'end_date': end.strftime('%Y-%m-%d') if end else None,
+    }
+    
+    if request.GET.get('preview') == 'true':
+        return JsonResponse({'success': True, 'mode': 'preview', 'parsed': json_ready})
+    
+    file.seek(0)
+    
+    print("Current user:", request.user, request.user.is_authenticated)
+    
+    surat = Surat.objects.create(
+        no_surat=surat_data['no_surat'],
+        file=file,
+        uploaded_by=request.user
+    )    
+    
+    start = surat_data['start_date']
+    end = surat_data['end_date']
+    pengurus = surat_data['pengurus']
+    tujuan = surat_data['tujuan']
+    agenda = surat_data['agenda']
+    
+    print("Parsed Data:", surat_data)
+    print("Creating Kunjungan between", start, 'and', end)
+    print("Pengurus:", pengurus)
+    
+    created_count = 0
+    if start and end and pengurus:
+        for offset in range((end - start).days + 1):
+            tanggal = start + timedelta (days=offset)
+            for nama, jabatan in pengurus:
+                user = CustomUser.objects.filter(nama__iexact=nama).first()
+                if not user:
+                    continue
+                Kunjungan.objects.create(
+                    surat=surat,
+                    user=user,
+                    no_surat=surat_data['no_surat'],
+                    nama=nama,
+                    jabatan=jabatan,
+                    tujuan=tujuan,
+                    agenda=agenda,
+                    tanggal_kegiatan=tanggal
+                )
+                created_count += 1
+                
+    return JsonResponse({'success': True, 'created': created_count})
+    
+@user_passes_test(is_admin)
+def surat_debug_pdfplumber(request):
+    """
+    Debug endpoint to show what pdfplumber actually extracts from a Surat PDF.
+    Uploads a PDF and returns the extracted text and line structure.
+    """
+    if request.method == 'POST' and request.FILES.get('file'):
+        file = request.FILES['file']
+        result = {}
+
+        try:
+            with pdfplumber.open(file) as pdf:
+                pages_data = []
+                for page_number, page in enumerate(pdf.pages, start=1):
+                    text = page.extract_text() or ""
+                    lines = text.splitlines() if text else []
+                    words = page.extract_words()
+                    pages_data.append({
+                        "page": page_number,
+                        "line_count": len(lines),
+                        "lines": lines,
+                        "words_count": len(words),
+                        "first_words": [w["text"] for w in words[:20]],  # show first 20 words
+                    })
+
+                result["pages"] = pages_data
+                result["success"] = True
+                result["page_count"] = len(pdf.pages)
+        except Exception as e:
+            result = {"success": False, "error": str(e)}
+
+        return JsonResponse(result, json_dumps_params={"ensure_ascii": False, "indent": 2})
+
+    return JsonResponse({"success": False, "error": "Gunakan POST dengan file PDF"})
+
+@user_passes_test(is_admin)
+def surat_debug_page(request):
+    return render(request, 'debug_pdfplumber.html')

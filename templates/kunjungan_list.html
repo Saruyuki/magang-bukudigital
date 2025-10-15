@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Kehadiran Pengurus{% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static "css/pengurus_list.css" %}">
+{% endblock  %}
+
+{% block page_title %}Kehadiran Pengurus{% endblock  %}
+
+{% block content %}
+    <div class="card">
+        <div class="pengurus-table-container p-4">
+            <div class="controls mb-4 flex flex-wrap gap-4 items-center">
+                <input type="text" id="searchInput" placeholder="Cari..." class="search-input border rounded px-3 py-1">
+
+                <select id="filterColumn" class="border rounded px-3 py-1">
+                    <option value=""> Filter berdasarkan kolom</option>
+                    <option value="no_surat">No Surat</option>
+                    <option value="nama">Nama</option>
+                    <option value="jabatan">Jabatan</option>
+                    <option value="Tujuan">tujuan</option>
+                    <option value="tanggal_kegiatan">Tanggal Kegiatan</option>
+                </select>
+            </div>
+
+            <table id='pengurusTable' class="pengurus-table border-collapse w-full text-left">
+                <thead>
+                    <tr>
+                        <th data-column="no_surat" class="sortable">No Surat</th>
+                        <th data-column="nama" class="sortable">Nama</th>
+                        <th data-column="jabatan" class="sortable">Jabatan</th>
+                        <th data-column="tujuan" class="sortable">Tujuan</th>
+                        <th data-column="agenda" class="sortable">Agenda</th>
+                        <th data-column="tanggal_kegiatan" class="sortable">Tanggal Kegiatan</th>
+                    </tr>
+                </thead>
+                <tbody id="pengurusTableBodyFull" class="hidden">
+                    {% for kunjungan in kunjungan_list %}
+                        <tr>
+                            <td>{{ kunjungan.no_surat }}</td>
+                            <td>{{ kunjungan.nama }}</td>
+                            <td>{{ kunjungan.jabatan }}</td>
+                            <td>{{ kunjungan.tujuan }}</td>
+                            <td>{{ kunjungan.agenda }}</td>
+                            <td>{{ kunjungan.tanggal_kegiatan|date:"Y-m-d" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="3">Tidak ada data pengurus.</td></tr>
+                    {% endfor %}
+                </tbody>
+
+                <tbody id="pengurusTableBody">
+
+                </tbody>
+            </table>
+
+            <div id="pagination-controls">
+                View
+                <select id="rowsPerPageSelect">
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                    <option value="20" selected>20</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                    <option value="all">All</option>
+                </select>
+                from <span id="totalRecords">0</span> records
+            </div>
+            
+            <div id="pagination" class="pagination mt-4 flex justify-end gap-2"></div>
+        </div>
+    </div>
+{% endblock  %}
+
+{% block extra_script %}
+    <script src="{% static "js/pengurus_list.js" %}"></script> 
+{% endblock  %}
+

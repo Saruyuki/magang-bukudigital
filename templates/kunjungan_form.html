@@ -1,0 +1,32 @@
+{% extends "base_form.html" %}
+{% load static %}
+
+{% block title %}Form Kunjungan{% endblock %}
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static "css/kunjungan_form.css" %}">
+{% endblock  %}
+
+{% block form_title %}Absensi Kunjungan{% endblock  %}
+{% block form_content %}
+    <form id="kunjungan-form" method="post" enctype="multipart/form-data" class="ajax-submit">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="mb-4">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <div class="text-red-500">{{ field.errors|striptags }}</div>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <div class="mb-4">
+            <label>Foto Kegiatan (kamera)</label>
+            <input type="file" name="foto_kegiatan" accept="image/*" capture="environment" id="foto_kegiatan">
+        </div>
+    </form>
+{% endblock  %}
+
+{% block extra_script %}
+    <script src="{% static "js/kunjungan.js" %}"></script>
+{% endblock  %}
+

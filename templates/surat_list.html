@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Daftar Surat Tugas{% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static "css/surat_list.css" %}">
+    <script>
+        window.currentUserName = "{{ request.user.nama|escapejs }}";
+    </script>
+{% endblock  %}
+
+{% block page_title %}Daftar Surat Tugas{% endblock  %}
+
+{% block content %}
+    <div class="card">
+        <div class="surat-table-container p-4">
+            <div class="controls mb-4 flex flex-wrap gap-4 items-center">
+                <input type="text" id="searchInput" placeholder="Cari..." class="search-input border rounded px-3 py-1">
+
+                <select id="filterColumn" class="border rounded px-3 py-1">
+                    <option value=""> Filter berdasarkan kolom</option>
+                    <option value="tanggal_upload">Tanggal Upload</option>
+                    <option value="uploaded_by">Diupload Oleh</option>
+                </select>
+
+                <button id="openUploadModal" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow">
+                    + Upload Surat
+                </button>
+            </div>
+
+            <table id='suratTable' class="surat-table border-collapse w-full text-left">
+                <thead>
+                    <tr>
+                        <th data-column="no_surat" class="sortable">No Surat</th>
+                        <th data-column="tanggal_upload" class="sortable">Tanggal Upload</th>
+                        <th data-column="uploaded_by" class="sortable">Diupload Oleh</th>
+                        <th data-column="jumlah_kehadiran" class="sortable">Jumlah Kehadiran</th>
+                    </tr>
+                </thead>
+                <tbody id="suratTableBodyFull" class="hidden">
+                    {% for surat in surat_list %}
+                        <tr>
+                            <td>{{ surat.no_surat }}</td>
+                            <td>{{ surat.created_at|date:"Y-m-d H:i" }}</td>
+                            <td>{{ surat.uploaded_by.nama }}</td>
+                            <td>{{ surat.kunjungan.count }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="3">Belum ada surat yang diunggah.</td></tr>
+                    {% endfor %}
+                </tbody>
+
+                <tbody id="suratTableBody">
+
+                </tbody>
+            </table>
+
+            <div id="pagination-controls">
+                View
+                <select id="rowsPerPageSelect">
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                    <option value="20" selected>20</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                    <option value="all">All</option>
+                </select>
+                from <span id="totalRecords">0</span> records
+            </div>
+            
+            <div id="pagination" class="pagination mt-4 flex justify-end gap-2"></div>
+        </div>
+    </div>
+
+    <div id="uploadModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-lg p-6 relative">
+            <button id="closeUploadModal" class="absolute top-3 right-2 text-gray-500 hover:text-gray-700">&times;</button>
+            <h2 class="text-xl font-semibold mb-4 text-gray-700">Upload Surat Tugas (PDF)</h2>
+
+            <form id="uploadForm" method="post" action="{% url "upload_surat" %}" enctype="multipart/form-data" class="space-y-4">
+                {% csrf_token %}
+                <div>
+                    <label class="block font-semibold mb-1">Nomor Surat</label>
+                    <input type="text" name="no_surat" class="border rounded w-full p-2" placeholder="Masukkan nomor surat" required>
+                </div>
+                <div>
+                    <label class="block font-semibold mb-1">File Surat (PDF)</label>
+                    <input type="file" name="file" class="border rounded w-full p-2" required>
+                </div>
+                <button type="button" id="previewBtn" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded">
+                    Preview
+                </button>
+                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow w-full">
+                    Upload
+                </button>
+            </form>
+
+            <div id="uploadResult" class="mt-3 text-sm"></div>
+        </div>
+    </div>
+{% endblock  %}
+
+{% block extra_script %}
+    <script src="{% static "js/surat_list.js" %}"></script>    
+    <script src="{% static "js/surat_upload.js" %}"></script> 
+{% endblock  %}
+

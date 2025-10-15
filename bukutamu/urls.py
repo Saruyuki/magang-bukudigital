@@ -23,5 +23,6 @@ urlpatterns = [
     path('', include('dashboard.urls')),
     path('tamu/', include('buku.urls')),
     path('kehadiran/', include('kehadiran.urls')),
+    path('kunjungan/', include('kunjunganKerja.urls')),
     
 ]

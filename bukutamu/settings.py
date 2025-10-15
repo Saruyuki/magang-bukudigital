@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'buku',
     'kehadiran',
     'dashboard',
+    'kunjunganKerja',
 ]
 
 MIDDLEWARE = [

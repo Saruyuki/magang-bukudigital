@@ -9,7 +9,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const rowsPerPageSelect = document.getElementById('rowsPerPageSelect');
     const totalRecordsSpan = document.getElementById('totalRecords');
 
-
     let rowsPerPage = rowsPerPageSelect.value === 'all' ? Infinity : parseInt(rowsPerPageSelect.value, 10);
     let currentPage = 1;
     let currentSort = { column: null, direction: null};

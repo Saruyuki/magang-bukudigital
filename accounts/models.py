@@ -10,3 +10,6 @@ class CustomUser(AbstractUser):
         ('pengurus', 'Pengurus'),
     )
     role = models.CharField(max_length=10,choices=ROLE_CHOICES, default='pengurus')
+    
+    def __str__(self):
+        return self.nama or self.username

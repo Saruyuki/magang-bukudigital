@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block page_title %}Debug PDFPlumber{% endblock %}
+
+{% block content %}
+<div class="card p-6">
+    <h2 class="text-xl font-bold mb-4">Debug PDF Extract</h2>
+    <form id="debugForm" enctype="multipart/form-data" method="post">
+        {% csrf_token %}
+        <input type="file" name="file" accept="application/pdf" required class="mb-3">
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Upload & Inspect</button>
+    </form>
+    <pre id="debugOutput" class="bg-gray-100 mt-4 p-3 rounded overflow-auto max-h-[400px] text-xs"></pre>
+</div>
+{% endblock %}
+
+{% block extra_script %}
+<script>
+document.querySelector('#debugForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const res = await fetch("{% url 'surat_debug_pdfplumber' %}", {
+        method: "POST",
+        headers: { "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value },
+        body: formData
+    });
+    const data = await res.json();
+    document.querySelector('#debugOutput').textContent = JSON.stringify(data, null, 2);
+});
+</script>
+{% endblock %}

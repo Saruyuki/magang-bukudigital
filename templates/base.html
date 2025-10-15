@@ -37,6 +37,16 @@
                     <span class="sidebar-icon hidden">*</span>
                     <span class="sidebar-label">Daftar Kehadiran Pengurus</span>
                 </a>
+                <a href="{% url "kunjungan_list" %}" class="sidebar-link">
+                    <span class="sidebar-icon hidden">#</span>
+                    <span class="sidebar-label">Daftar Kunjungan</span>
+                </a>
+                {% if user.is_authenticated and user.role == 'admin' %}
+                    <a href="{% url "surat_list" %}" class="sidebar-link">
+                        <span class="sidebar-icon hidden">%%</span>
+                        <span class="sidebar-label">Daftar Surat Tugas</span>
+                    </a> 
+                {% endif %}
             </nav>
         </aside>
 
