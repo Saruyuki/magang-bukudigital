@@ -23,6 +23,10 @@ def kunjungan_form(request, pk):
         if form.is_valid():
             obj = form.save(commit=False)
             obj.submitted_at = datetime.now()
+            obj.foto_kegiatan = request.FILES.get('foto_kegiatan')
+            obj.foto_lat = request.POST.get('client_lat') or obj.foto_lat
+            obj.foto_lon = request.POST.get('client_lon') or obj.foto_lon
+            obj.foto_datetime = request.POST.get('client_photo_dt') or obj.foto_datetime
             obj.save()
             return JsonResponse({'success': True})
         else :

@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const openBtn = document.getElementById('openUploadModal');
     const closeBtn = document.getElementById('closeUploadModal');
     const form = document.getElementById('uploadForm');
-    const tableBody = document.getElementById('suratTableBody');
+    const tableBody = document.getElementById('listTableBody');
     const resultBox = document.getElementById('uploadResult');
     const previewBtn = document.getElementById('previewBtn');
 
@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td>${data.created}</td>
                 </tr>`;
             
-            const fullBody = document.getElementById('suratTableBodyFull');
+            const fullBody = document.getElementById('listTableBodyFull');
             fullBody.insertAdjacentHTML('afterbegin', newRow);
 
             if (typeof renderTable === 'function') {

@@ -6,7 +6,7 @@ class KunjunganForm(forms.ModelForm):
         model = Kunjungan
         fields = [ 
             'no_surat', 'nama', 'jabatan', 'tujuan', 'agenda',
-            'tanggal_kegiatan', 'catatan_kunjungan', 'foto_kegiatan',
+            'tanggal_kegiatan', 'catatan_kunjungan', 
         ]
         widgets = {
             'no_surat': forms.TextInput(attrs={'readonly': 'readonly', 'class': 'form-control'}),
@@ -18,7 +18,7 @@ class KunjunganForm(forms.ModelForm):
             'catatan_kunjungan': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         }
     
-    def __inti__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
         if user :

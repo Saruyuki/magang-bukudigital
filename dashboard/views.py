@@ -1,4 +1,4 @@
-from django.contrib.auth.decorators import  user_passes_test
+from django.contrib.auth.decorators import  user_passes_test, login_required
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.timezone import now
@@ -22,9 +22,8 @@ import pdfplumber
 def is_admin(user):
     return user.is_authenticated and user.role == 'admin'
 
+@login_required
 def admin_dashboard(request):
-    if not request.session.get('admin_logged_in'):
-        return redirect('login')
     
     today = now().date()
     start_of_month = today.replace(day=1)
@@ -71,26 +70,29 @@ def admin_dashboard(request):
         'keperluan_data': keperluan_data,
     })
 
-def tamu_list_view(request):
-    if not request.session.get('admin_logged_in'):
-        return redirect('login')
-    
+@login_required
+def tamu_list_view(request):   
     tamu_list = Tamu.objects.all().order_by('-tanggal_kunjungan')
     return render(request, 'tamu_list.html', {'tamu_list': tamu_list})
 
-def pengurus_list_view(request):
-    if not request.session.get('admin_logged_in'):
-        return redirect('login')
-    
+@login_required
+def pengurus_list_view(request):   
     pengurus_list = Kehadiran.objects.all().order_by('-tanggal_masuk')
     return render(request, 'pengurus_list.html', {'pengurus_list': pengurus_list})
 
+@login_required
 def kunjungan_list_view(request):
-    if not request.session.get('admin_logged_in'):
-        return redirect('login')
+    user = request.user
     
-    kunjungan_list = Kunjungan.objects.all().order_by('-created_at')
-    return render(request, 'kunjungan_list.html', {'kunjungan_list': kunjungan_list})
+    if user.role == 'admin':
+        kunjungan_list = Kunjungan.objects.select_related('user', 'surat').order_by('-tanggal_kegiatan')
+    else :
+        kunjungan_list = Kunjungan.objects.filter(user=user).select_related('surat').order_by('-tanggal_kegiatan')        
+    
+    return render(request, 'kunjungan_list.html', {
+        'kunjungan_list': kunjungan_list,
+        'is_admin': user.role == 'admin',
+        })
     
 @user_passes_test(is_admin)
 def surat_list_view(request):
@@ -161,6 +163,7 @@ def surat_upload_view(request):
                     
         return JsonResponse({'success': True, 'created': created_count})
     except Exception as e:
+        print("Upload error:", e)
         return JsonResponse({'success': False, 'error': f'Kesalahan server: {e}'})
 
 @user_passes_test(is_admin)

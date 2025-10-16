@@ -36,6 +36,7 @@
                         <th data-column="tanggal_upload" class="sortable">Tanggal Upload</th>
                         <th data-column="uploaded_by" class="sortable">Diupload Oleh</th>
                         <th data-column="jumlah_kehadiran" class="sortable">Jumlah Kehadiran</th>
+                        <th class="text-center">Action</th>
                     </tr>
                 </thead>
                 <tbody id="listTableBodyFull" class="hidden">
@@ -45,10 +46,10 @@
                             <td>{{ surat.created_at|date:"Y-m-d H:i" }}</td>
                             <td>{{ surat.uploaded_by.nama }}</td>
                             <td>{{ surat.kunjungan.count }}</td>
-                            <td class="flex gap-2">
-                                <button class="show-btn text-blue-600" data-file="{{ surat.file.url }}">*Eye</button>
-                                <button class="edit-btn text-yellow-600">*Pencil</button>
-                                <button class="delete-btn text-red-600">*Trash</button>
+                            <td class="text-center gap-2">
+                                <button class="show-btn bg-blue-600 text-white px-2 py-1 rounded" data-file="{{ surat.file.url }}">*Eye</button>
+                                <button class="edit-btn bg-yellow-600 text-white px-2 py-1 rounded">*Pencil</button>
+                                <button class="delete-btn bg-red-600 text-white px-2 py-1 rounded">*Trash</button>
                             </td>
                         </tr>
                         {% empty %}
