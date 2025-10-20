@@ -1,0 +1,69 @@
+{% extends "base_form.html" %}
+{% load static %}
+
+{% block title %}Form Buku Tamu{% endblock  %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">  
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <link rel="stylesheet" href="{% static "css/tamu_form.css" %}">
+    <script>
+        $(document).ready(function() {
+            const $select = $('select');
+            
+            $select.select2({
+                placeholder: 'Pilih Provinsi',
+                width: '100%'
+            });
+
+            $select.on('focus click', function() {
+                $(this).select2('open');
+                setTimeout(function() {
+                    const $searchField = $('.select2-search__field');
+                    $searchField.css({
+                        'color': 'black',
+                        'background-color': 'white',
+                        'caret-color': 'black'
+                    });
+                    $searchField.focus();
+                });
+            });
+
+            $select.on('select2:open', function() {
+                setTimeout(function() {
+                    $('.select2-search__field').focus();
+                }, 0);
+            });
+
+            $searchField.on('focus', function() {
+                if (!$select.data('select2').isOpen()) {
+                    $select.select2('open');
+                }
+            });
+        });
+    </script>
+{% endblock  %}
+
+{% block form_title %} Buku Tamu Digital KONI {% endblock  %}
+
+{% block form_content %}
+    <form action="{% url 'tamu_submit' %}" method="post" class="space-y-4 ajax-submit">
+        {% csrf_token %}
+        {{form.non_field_errors}}
+
+        {% for field in form %}
+            <div class="mb-4">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                
+                {% if field.errors %}
+                    <p class="text-red-500">{{ field.errors|striptags }}</p>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <div class="text-center mt-4">
+            <button type="submit">Kirim</button>
+        </div>
+    </form>
+{% endblock %}

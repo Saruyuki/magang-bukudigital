@@ -1,0 +1,157 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+#sidebar {
+    background: linear-gradient(to bottom, #2786cc, #3051a0);
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 30;
+    overflow-y: auto;
+    transition: width 0.3s ease;
+}
+
+.sidebar-expanded {
+    width: 16rem;
+}
+
+.sidebar-collapsed {
+    width: 4rem;
+    transition: width 0.3s ease;
+}
+
+.sidebar-collapse.disable-hover:hover{
+    width: 4rem !important;
+}
+
+.sidebar-collapsed:hover:not(.disable-hover) {
+    width: 16rem;
+    z-index: 40;
+}
+
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 4rem;
+    padding: 0 1rem;
+    background-color:#2786cc;
+}
+
+.logo-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.app-name {
+    color: white;
+    font-size: 1.125rem;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    
+}
+
+.sidebar-label,
+.app-name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sidebar-collapsed:not(.disable-hover):hover .sidebar-label,
+.sidebar-collapsed:not(.disable-hover):hover .app-name {
+    display: inline;
+}
+
+.sidebar-collapsed:not(.disable-hover):hover .sidebar-icon {
+    display: none;
+}
+
+.sidebar-toogle {
+    border: none;
+    font-size: 1.25rem;
+    cursor: pointer;
+}
+
+.sidebar-nav {
+    padding: 1rem;
+}
+
+.sidebar-link{
+    display: block;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 0.375rem;
+    transition: background 0.2s;
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+}
+
+.sidebar-link:hover {
+    background-color: #3051a0;
+}
+
+.sidebar-collapse .sidebar-link .sidebar-label {
+    display: none;
+}
+
+.page-title {
+    color: white;
+    font-size: 1.25rem;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+}
+
+.page-content {
+    padding: 5rem 1rem 1rem;
+    overflow-y: auto;
+    height: 100%;
+}
+
+.user-menu-container {
+    position: relative;
+}
+
+.user-dropdown {
+    position: absolute;
+    right: 0;
+    top: 2.5rem;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.375rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    width: 10rem;
+}
+.user-dropdown a {
+    display: block;
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+    color: #374151;
+}
+
+.user-dropdown a:hover {
+    background-color: #f3f4f6;
+}
+
+.date{
+    color: #ffffff;
+}
+
+.topbare {
+    background: linear-gradient(to right, #2786cc, #3051a0);
+    position: fixed;
+    top: 0;
+    left: 16rem; /* sesuai sidebar yang lebarnya 16rem */
+    right: 0;
+    height: 4rem;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 1rem;
+    z-index: 20;
+    transition: all 0.3s ease;
+}

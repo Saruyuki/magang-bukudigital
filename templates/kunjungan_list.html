@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Kehadiran Pengurus{% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'css/table_list.css' %}">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+{% endblock  %}
+
+{% block page_title %}Kehadiran Pengurus{% endblock  %}
+
+{% block content %}
+    <div class="card">
+        <div class="list-table-container p-4">
+            <div class="controls mb-4 flex flex-wrap gap-4 items-center">
+                <input type="text" id="searchInput" placeholder="Cari..." class="search-input border rounded px-3 py-1" style="border-color: #3051a0;">
+
+                <select id="filterColumn" class="border rounded px-3 py-1" style="border-color: #3051a0;">
+                    <option value=""> Filter berdasarkan kolom</option>
+                    <option value="no_surat">No Surat</option>
+                    <option value="nama">Nama</option>
+                    <option value="jabatan">Jabatan</option>
+                    <option value="Tujuan">tujuan</option>
+                    <option value="tanggal_kegiatan">Tanggal Kegiatan</option>
+                </select>
+            </div>
+
+            <table id='listTable' class="list-table border-collapse w-full text-left">
+                <thead>
+                    <tr>
+                        <th data-column="no_surat" class="sortable" style="background: #3051a0; color: white;">No Surat</th>
+                        <th data-column="nama" class="sortable" style="background: #3051a0; color: white;">Nama</th>
+                        <th data-column="jabatan" class="sortable" style="background: #3051a0; color: white;">Jabatan</th>
+                        <th data-column="tujuan" class="sortable" style="background: #3051a0; color: white;">Tujuan</th>
+                        <th data-column="agenda" class="sortable" style="background: #3051a0; color: white;">Agenda</th>
+                        <th data-column="tanggal_kegiatan" class="sortable" style="background: #3051a0; color: white;">Tanggal Kegiatan</th>
+                        <th data-column="catatan_kunjungan" style="background: #3051a0; color: white;">Catatan</th>
+                        <th class="text-center" style="background: #3051a0; color: white;">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="listTableBodyFull" class="hidden">
+                    {% for kunjungan in kunjungan_list %}
+                        <tr>
+                            <td>{{ kunjungan.no_surat }}</td>
+                            <td>{{ kunjungan.nama }}</td>
+                            <td>{{ kunjungan.jabatan }}</td>
+                            <td>{{ kunjungan.tujuan }}</td>
+                            <td>{{ kunjungan.agenda }}</td>
+                            <td>{{ kunjungan.tanggal_kegiatan|date:"Y-m-d" }}</td>
+                            <td>{{ kunjungan.catatan_kunjungan }}</td>
+                            <td class="text-center gap-2">
+                                <button class="bg-green-600 text-white px-2 py-1 rounded" onclick="isiForm('{{ kunjungan.id }}')">*Mengisi</button>
+                                {% if is_admin %}
+                                    {% if kunjungan.foto_kegiatan %}
+                                        <button class="bg-blue-600 text-white px-2 py-2 py-1 rounded" onclick="showFotoModal('{{ kunjungan.id }}', '{{ kunjungan.foto_kegiatan.url }}', '{{ kunjungan.foto_lat}}', '{{ kunjungan.foto_lon}}', '{{ kunjungan.foto_datetime|date:'Y-m-d H:i'}}')">*Foto</button>
+                                    {% endif %}
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="3">Belum ada data kunjungan.</td></tr>
+                    {% endfor %}
+                </tbody>
+
+                <tbody id="listTableBody">
+
+                </tbody>
+            </table>
+
+            <div id="pagination-controls">
+                View
+                <select id="rowsPerPageSelect" style="border-color: #3051a0;">
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                    <option value="20" selected>20</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                    <option value="all">All</option>
+                </select>
+                from <span id="totalRecords">0</span> records
+            </div>
+            
+            <div id="pagination" class="pagination mt-4 flex justify-end gap-2"></div>
+        </div>
+    </div>
+
+    <div id="fotoModal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
+    <div class="bg-white rounded-2xl shadow-2xl w-11/12 md:w-3/4 h-[85vh] flex flex-col relative overflow-hidden">
+        <button id="closeFotoModal" class="absolute top-3 right-4 text-gray-600 hover:text-gray-900 text-3xl leading-none">&times;</button>
+        <h2 class="text-xl font-semibold text-center text-gray-700 mt-4 mb-2">Detail Foto Kegiatan</h2>
+
+        <div class="flex-1 flex flex-col md:flex-row gap-4 px-6 pb-6 overflow-hidden min-h-0">
+        <div class="w-full md:w-1/2 flex flex-col items-center justify-start overflow-hidden">
+            <img id="fotoPreview"
+                class="rounded-lg border shadow w-full h-3/4 object-contain bg-gray-50"
+                src=""
+                alt="Foto Kegiatan">
+            <p class="mt-2 text-sm text-gray-600 text-center">
+            <b>Waktu:</b> <span id="fotoDateTime">-</span>
+            </p>
+        </div>
+
+        <div class="w-full md:w-1/2 flex items-center justify-center min-h-0">
+            <div id="fotoMap" class="w-full h-full rounded-lg border shadow-inner"></div>
+        </div>
+        </div>
+    </div>
+    </div>
+</div>
+
+{% endblock  %}
+
+{% block extra_script %}
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="{% static "js/foto_modal.js" %}"></script>
+    <script src="{% static "js/table_list.js" %}"></script> 
+{% endblock  %}
+

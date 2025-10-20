@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href={% static "css/admin_dashboard.css" %}>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock  %}
+
+{% block page_title %}Dashboard Admin{% endblock  %}
+
+{% block content %}
+    <div class="grid grid cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div class="card">
+            <h3 class="card-title">Pengunjung Bulan Ini</h3>
+            <p class="card-value">{{ pengunjung_bulan }}</p>
+        </div>
+        <div class="card">
+            <h3 class="card-title">Pengunjung Hari Ini</h3>
+            <p class="card-value">{{ pengunjung_hari }}</p>
+        </div>
+        <div class="card">
+            <h3 class="card-title">Pengurus Masuk Hari Ini</h3>
+            <p class="card-value">{{ pengurus_hari }}</p>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="chart-container">
+            <h4 class="chart-title">Pengunjung per Provinsi (Bulan Ini)</h4>
+            <canvas id="provinsiChart"></canvas>
+        </div>
+
+        <div class="chart-container">
+            <h4 class="chart-title">Keperluan Pengunjung</h4>
+            <canvas id="keperluanChart"></canvas>
+        </div>
+    </div>
+{% endblock  %}
+
+{% block extra_script %}
+    <script>
+        const provinsiLabels = {{ provinsi_labels|safe }}
+        const provinsiData = {{ provinsi_data|safe }}
+        const keperluanLabels = {{ keperluan_labels|safe }}
+        const keperluanData = {{ keperluan_data|safe }}
+    </script>
+
+    <script src={% static "js/admin_dashboard.js" %}></script>
+{% endblock  %}
+

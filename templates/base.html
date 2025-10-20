@@ -1,0 +1,82 @@
+{% load static %} 
+{% load django_browser_reload %}
+{% django_browser_reload_script %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Buku Digital{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    
+    {% block extra_head %}{% endblock %}
+</head>
+
+<body class="bg-gray-100 text-gray-800">
+    <div id="layout" class="flex h-screen overflow-hidden">
+        <aside id="sidebar" class='sidebar-expanded transition-all duration-300'>
+            <div class="sidebar-header">
+                <a href="{% url "admin_dashboard" %}" class="logo-link">
+                    <img src="/static/image/logokoni.png" alt="Logo" class="h-8 w-8">
+                    <span class="app-name">Buku Digital</span>
+                </a>
+                <button id="toggleSidebarBtn" class="sidebar-toggle" style="color: white;">=</button>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="{% url "admin_dashboard" %}" class="sidebar-link">
+                    <span class="sidebar-icon hidden"><img src="/static/image/logo-dashbord.png"></span>
+                    <span class="sidebar-label">Dashboard</span>
+                </a>
+                <a href="{% url "tamu_list" %}" class="sidebar-link">
+                    <span class="sidebar-icon hidden"><img src="/static/image/logo-buku-tamu.png"></span>
+                    <span class="sidebar-label">Daftar Tamu</span>
+                </a>
+                <a href="{% url "pengurus_list" %}" class="sidebar-link">
+                    <span class="sidebar-icon hidden"><img src="/static/image/logo-daftar-pengurus.png"></span>
+                    <span class="sidebar-label">Daftar Kehadiran Pengurus</span>
+                </a>
+                <a href="{% url "kunjungan_list" %}" class="sidebar-link">
+                    <span class="sidebar-icon hidden"><img src="/static/image/logo-kunjungan.png"></span>
+                    <span class="sidebar-label">Daftar Kunjungan</span>
+                </a>
+                {% if user.is_authenticated and user.role == 'admin' %}
+                    <a href="{% url "surat_list" %}" class="sidebar-link">
+                        <span class="sidebar-icon hidden"><img src="/static/image/logo-surat-tugas.png"></span>
+                        <span class="sidebar-label">Daftar Surat Tugas</span>
+                    </a> 
+                {% endif %}
+            </nav>
+        </aside>
+
+        <!--Main Content Wrapper -->
+        <div id="main" class="flex-1 ml-64 transition-all duration-300">
+            <!-- Topbar -->
+            <header id="topbar" class="topbare">
+                <h1 class="page-title">{% block page_title %}{% endblock %} </h1>
+                <div class="user-menu-container text-right" style="gap: 1rem; display: flex;">
+                    <div class="date">{{ current_date|date:"Y M d"}}</div>
+                    <button id="userMenuBtn">
+                        <img src="/static/image/account.png" alt="#" class="h-6 w-6">
+                    </button>
+                    <!-- Dropdown -->
+                    <div id="userDropdown" class="user-dropdown hidden">
+                        <a href="#">Profile</a>
+                        <a href="{% url "logout" %}">Logout</a>
+                    </div>
+                </div>
+            </header>
+
+            <main class="page-content">
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+
+    <script src={% static "js/base.js" %}></script>
+
+    {% block extra_script %}{% endblock %}
+
+</body>
+</html>
