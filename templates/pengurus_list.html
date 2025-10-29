@@ -4,7 +4,7 @@
 {% block title %}Kehadiran Pengurus{% endblock %}
 
 {% block extra_head %}
-    <link rel="stylesheet" href="{% static "css/table_list.css" %}">
+    <link rel="stylesheet" href="{% static 'css/table_list.css' %}">
 {% endblock  %}
 
 {% block page_title %}Kehadiran Pengurus{% endblock  %}
@@ -13,9 +13,9 @@
     <div class="card">
         <div class="list-table-container p-4">
             <div class="controls mb-4 flex flex-wrap gap-4 items-center">
-                <input type="text" id="searchInput" placeholder="Cari..." class="search-input border rounded px-3 py-1">
+                <input type="text" id="searchInput" placeholder="Cari..." class="search-input border rounded px-3 py-1" style="border-color: #3051a0;">
 
-                <select id="filterColumn" class="border rounded px-3 py-1">
+                <select id="filterColumn" class="border rounded px-3 py-1" style="border-color: #3051a0;">
                     <option value=""> Filter berdasarkan kolom</option>
                     <option value="nama">Nama</option>
                     <option value="jabatan">Jabatan</option>
@@ -26,10 +26,10 @@
             <table id='listTable' class="list-table border-collapse w-full text-left">
                 <thead>
                     <tr>
-                        <th data-column="nama" class="sortable">Nama</th>
-                        <th data-column="jabatan" class="sortable">Jabatan</th>
-                        <th data-column="agenda" class="sortable">Agenda</th>
-                        <th data-column="tanggal_masuk" class="sortable">Tanggal Masuk</th>
+                        <th data-column="nama" class="sortable" style="background: #3051a0; color: white;">Nama</th>
+                        <th data-column="jabatan" class="sortable" style="background: #3051a0; color: white;">Jabatan</th>
+                        <th data-column="agenda" class="sortable" style="background: #3051a0; color: white;">Agenda</th>
+                        <th data-column="tanggal_masuk" class="sortable" style="background: #3051a0; color: white;">Tanggal Masuk</th>
                     </tr>
                 </thead>
                 <tbody id="listTableBodyFull" class="hidden">
@@ -52,7 +52,7 @@
 
             <div id="pagination-controls">
                 View
-                <select id="rowsPerPageSelect">
+                <select id="rowsPerPageSelect" style="border-color: #3051a0;">
                     <option value="5">5</option>
                     <option value="10">10</option>
                     <option value="20" selected>20</option>

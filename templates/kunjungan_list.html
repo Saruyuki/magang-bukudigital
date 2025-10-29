@@ -4,7 +4,7 @@
 {% block title %}Kehadiran Pengurus{% endblock %}
 
 {% block extra_head %}
-    <link rel="stylesheet" href="{% static "css/table_list.css" %}">
+    <link rel="stylesheet" href="{% static 'css/table_list.css' %}">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 {% endblock  %}
 
@@ -14,9 +14,9 @@
     <div class="card">
         <div class="list-table-container p-4">
             <div class="controls mb-4 flex flex-wrap gap-4 items-center">
-                <input type="text" id="searchInput" placeholder="Cari..." class="search-input border rounded px-3 py-1">
+                <input type="text" id="searchInput" placeholder="Cari..." class="search-input border rounded px-3 py-1" style="border-color: #3051a0;">
 
-                <select id="filterColumn" class="border rounded px-3 py-1">
+                <select id="filterColumn" class="border rounded px-3 py-1" style="border-color: #3051a0;">
                     <option value=""> Filter berdasarkan kolom</option>
                     <option value="no_surat">No Surat</option>
                     <option value="nama">Nama</option>
@@ -29,14 +29,14 @@
             <table id='listTable' class="list-table border-collapse w-full text-left">
                 <thead>
                     <tr>
-                        <th data-column="no_surat" class="sortable">No Surat</th>
-                        <th data-column="nama" class="sortable">Nama</th>
-                        <th data-column="jabatan" class="sortable">Jabatan</th>
-                        <th data-column="tujuan" class="sortable">Tujuan</th>
-                        <th data-column="agenda" class="sortable">Agenda</th>
-                        <th data-column="tanggal_kegiatan" class="sortable">Tanggal Kegiatan</th>
-                        <th data-column="catatan_kunjungan">Catatan</th>
-                        <th class="text-center">Aksi</th>
+                        <th data-column="no_surat" class="sortable" style="background: #3051a0; color: white;">No Surat</th>
+                        <th data-column="nama" class="sortable" style="background: #3051a0; color: white;">Nama</th>
+                        <th data-column="jabatan" class="sortable" style="background: #3051a0; color: white;">Jabatan</th>
+                        <th data-column="tujuan" class="sortable" style="background: #3051a0; color: white;">Tujuan</th>
+                        <th data-column="agenda" class="sortable" style="background: #3051a0; color: white;">Agenda</th>
+                        <th data-column="tanggal_kegiatan" class="sortable" style="background: #3051a0; color: white;">Tanggal Kegiatan</th>
+                        <th data-column="catatan_kunjungan" style="background: #3051a0; color: white;">Catatan</th>
+                        <th class="text-center" style="background: #3051a0; color: white;">Aksi</th>
                     </tr>
                 </thead>
                 <tbody id="listTableBodyFull" class="hidden">
@@ -50,10 +50,14 @@
                             <td>{{ kunjungan.tanggal_kegiatan|date:"Y-m-d" }}</td>
                             <td>{{ kunjungan.catatan_kunjungan }}</td>
                             <td class="text-center gap-2">
-                                <button class="bg-green-600 text-white px-2 py-1 rounded" onclick="isiForm('{{ kunjungan.id }}')">*Mengisi</button>
+                                <button class=" px-2 py-1 rounded" style="background-color: #008000;" onclick="isiForm('{{ kunjungan.id }}')">
+                                    <img src="{% static "image/pen-1.png" %} " style="size:20px; height:25px;">
+                                </button>
                                 {% if is_admin %}
                                     {% if kunjungan.foto_kegiatan %}
-                                        <button class="bg-blue-600 text-white px-2 py-2 py-1 rounded" onclick="showFotoModal('{{ kunjungan.id }}', '{{ kunjungan.foto_kegiatan.url }}', '{{ kunjungan.foto_lat}}', '{{ kunjungan.foto_lon}}', '{{ kunjungan.foto_datetime|date:'Y-m-d H:i'}}')">*Foto</button>
+                                        <button class=" px-2 py-2 py-1 rounded"  style="background-color: #1e90ff;" onclick="showFotoModal('{{ kunjungan.id }}', '{{ kunjungan.foto_kegiatan.url }}', '{{ kunjungan.foto_lat}}', '{{ kunjungan.foto_lon}}', '{{ kunjungan.foto_datetime|date:'Y-m-d H:i'}}')">
+                                            <img src="{% static "image/photo.png" %} " style="size:20px; height:20px;">
+                                        </button>
                                     {% endif %}
                                 {% endif %}
                             </td>
@@ -70,7 +74,7 @@
 
             <div id="pagination-controls">
                 View
-                <select id="rowsPerPageSelect">
+                <select id="rowsPerPageSelect" style="border-color: #3051a0;">
                     <option value="5">5</option>
                     <option value="10">10</option>
                     <option value="20" selected>20</option>

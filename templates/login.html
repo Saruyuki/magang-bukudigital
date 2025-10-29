@@ -3,40 +3,48 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Admin</title>
+
+    <!-- Bootstrap -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="{% static 'css/login.css' %}">
 </head>
 <body>
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="card login-card">
-                    <div class="card-header text-center bg-primary text-white">
-                        <h4>Login Admin Buku Tamu</h4>
+    <div class="login-container d-flex justify-content-center align-items-center min-vh-100">
+        <div class="login-card">
+            <!-- Bagian kiri (logo) -->
+            <div class="login-left d-flex justify-content-center align-items-center">
+                <img src="{% static 'image/logokoni.png' %}" alt="Logo KONI" class="login-logo">
+            </div>
+
+            <!-- Bagian kanan (form) -->
+            <div class="login-right card-body">
+                <h4 style="font-weight: bold; text-align: center; color: #3051a0;">Login Admin Buku Tamu</h4>
+
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}" role="alert">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <form action="{% url 'login' %}" method="post">
+                    {% csrf_token %}
+                    <div class="form-group mb-3">
+                        <label for="username">Username</label>
+                        <input type="text" class="form-control" id="username" name="username" placeholder="Masukkan username" required>
                     </div>
-                    <div class="card-body">
-                        {% if messages %}
-                            {% for message in messages %}
-                                <div class="alert alert-{{ message.tags }}" role="alert">
-                                    {{ message }}
-                                </div>
-                            {% endfor %}
-                        {% endif %}
-                        <form action="{% url 'login' %}" method="post">
-                            {%csrf_token%}
-                            <div class="form-group">
-                                <label for="username">Username</label>
-                                <input type="text" class="form-control" id="username" name="username" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="password">Password</label>
-                                <input type="password" class="form-control" id="password" name="password" required>
-                            </div>
-                            <button type="submit" class="btn btn-primary btn-block">Masuk</button>
-                        </form>
+
+                    <div class="form-group mb-4">
+                        <label for="password">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Masukkan password" required>
                     </div>
-                </div>
+
+                    <button type="submit" class="btn btn-primary btn-block py-2">Masuk</button>
+                </form>
             </div>
         </div>
     </div>

@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Manajemen Pengguna{% endblock %}
+
+{% block content %}
+    <div class="p-6">
+        <h2 class="text-2xl font-semibold mb-4">Tambah Pengguna</h2>
+
+        <form method="POST">
+            {% csrf_token %}
+            {{ single_form.as_p }}
+            <button type="submit" name="single_submit" class="bg-blue-600 text-white px-4 py-2 rounded">Tambah User</button>
+        </form>
+
+        <hr class="my-6">
+
+        <h2 class="text-2xl font-semibold mb-4">Unggah Banyak Pengguna</h2>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ bulk_form.as_p }}
+            <button type="submit" name="bulk_submit" class="bg-green-600 text-white px-4 py-2 rounded">Unggah File</button>
+        </form>
+
+        <hr class="my-6">
+
+        <h2 class="text-2xl font-semibold mb-4">Daftar Pengguna</h2>
+        <table class="table-auto w-full border-collapse border">
+            <thead>
+                <tr class="bg-gray-100 border">
+                    <th class="border px-4 py-2">Username</th>
+                    <th class="border px-4 py-2">Nama</th>
+                    <th class="border px-4 py-2">Jabatan</th>
+                    <th class="border px-4 py-2">Role</th>
+                    <th class="border px-4 py-2">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td class="border px-4 py-2">{{ user.username }}</td>
+                    <td class="border px-4 py-2">{{ user.nama }}</td>
+                    <td class="border px-4 py-2">{{ user.jabatan }}</td>
+                    <td class="border px-4 py-2">{{ user.role }}</td>
+                    <td class="border px-4 py-2 text-center">
+                         <button class="bg-yellow-500 text-white px-3 py-1 rounded" onclick="openEditUser('{{ user.id }}')">Edit</button>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="5" class="text-center py-4">Belum ada pengguna.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div id="editUserModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6 relative">
+            <button id="closeEditUserModal" class="absolute top-2 right-2 text-gray-600 hover:text-gray-800">&times;</button>
+            <h2 class="text-xl font-semibold mb-4">Edit User</h2>
+
+            <form id="editUserForm">
+                {% csrf_token %}
+                <input type="hidden" id="editUserId" name="editUserId">
+                
+                <div class="mb-3">
+                    <label>Nama</label>
+                    <input type="text" id="editNama" name="editNama" class="w-full border rounded p-2">
+                </div>
+                
+                <div class="mb-3">
+                    <label>Jabatan</label>
+                    <input type="text" id="editJabatan" name="editJabatan" class="w-full border rounded p-2">
+                </div>
+
+                <div class="mb-3">
+                    <label>Role</label>
+                    <select id="editRole" name="editRole" class="w-full border rounded p-2">
+                    <option value="admin">Admin</option>
+                    <option value="pengurus">Pengurus</option>
+                    </select>
+                </div>
+
+                <div class="flex justify-end gap-2 mt-4">
+                    <button type="button" id="cancelEditBtn" class="px-4 py-2 bg-gray-400 text-white rounded">Batal</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_script %}
+    <script>
+        window.editUserUrlPattern = "{% url "edit_user" 0 %}".replace('0/', '');
+    </script>
+    <script src="{% static 'js/user_edit.js' %}"></script>
+{% endblock %}
+
