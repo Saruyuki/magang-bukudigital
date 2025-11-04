@@ -10,7 +10,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
-    
+    <link rel="icon" type="image/png" href="{% static 'image/logokoni.png' %}">
     {% block extra_head %}{% endblock %}
 </head>
 
@@ -22,7 +22,11 @@
                     <img src="/static/image/logokoni.png" alt="Logo" class="h-8 w-8">
                     <span class="app-name">Buku Digital</span>
                 </a>
-                <button id="toggleSidebarBtn" class="sidebar-toggle" style="color: white;">=</button>
+                <button id="toggleSidebarBtn" class="sidebar-toggle flex flex-col justify-between w-3 h-3 cursor-pointer">
+                    <span class="bar bg-white rounded h-0.5 w-full transition-all duration-300"></span>
+                    <span class="bar bg-white rounded h-0.5 w-full transition-all duration-300"></span>
+                    <span class="bar bg-white rounded h-0.5 w-full transition-all duration-300"></span>
+                </button>
             </div>
             <nav class="sidebar-nav">
                 {% if user.is_authenticated and user.role == 'admin' %}
@@ -82,7 +86,40 @@
             </header>
 
             <main class="page-content">
+
                 {% block content %}{% endblock %}
+
+                <div id="notifModal" class="hidden modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div class="bg-white rounded-lg shadow-lg w-full max-w-lg p-6 relative">
+                        <h2 class="text-xl font-semibold mb-4 text-gray-600 mb-3">Notifikasi</h2>
+                        <p id="notifModalMessage" class="text-gray-700 text-center"></p>
+                        <div class="mt-4 text-center">
+                            <button id="okNotifModal" class="bg-blue-600 text-white px-4 py-2 rounded">OK</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="errorModal" class="hidden modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div class="bg-white rounded-lg shadow-lg w-full max-w-lg p-6 relative">
+                        <h2 class="text-xl font-semibold mb-4 text-gray-600 mb-3">Terjadi Kesalahan</h2>
+                        <p id="errorModalMessage" class="text-gray-700 text-center"></p>
+                        <div class="mt-4 text-center">
+                            <button id="okErrorModal" class="bg-blue-600 text-white px-4 py-2 rounded">OK</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="confirmationModal" class="hidden modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div class="bg-white rounded-lg shadow-lg max-w-sm w-full mx-4 p-6 relative">
+                        <h2 class="text-lg font-semibold text-gray-600 mb-3">Konfirmasi</h2>
+                        <p id="confirmationModalMessage" class="text-gray-700 text-center mb-4"></p>
+                        <div class="flex justify-center gap-4">
+                            <button id="cancelConfirmationBtn" class="bg-gray-400 text-white px-4 py-2 rounded">Batal</button>
+                            <button id="okConfirmationBtn" class="bg-blue-600 text-white px-4 py-2 rounded">Ya</button>
+                        </div>
+                    </div>
+                </div>
+
             </main>
         </div>
     </div>

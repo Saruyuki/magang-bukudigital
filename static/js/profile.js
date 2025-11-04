@@ -26,15 +26,15 @@ document.addEventListener('DOMContentLoaded', () => {
       const data = await res.json();
 
       if (data.success) {
-        alert("Password berhasil diubah.");
+        showNotif("Password berhasil diubah.");
         closeModal();
         form.reset();
       } else {
-        alert(data.error || "Gagal mengubah password.");
+        showNotif(data.error || "Gagal mengubah password.");
       }
     } catch (err) {
       console.error("Error:", err);
-      alert("Terjadi kesalahan jaringan.");
+      showNotif("Terjadi kesalahan jaringan.");
     }
   });
 });

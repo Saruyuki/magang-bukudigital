@@ -1,6 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
   const modal = document.getElementById("fotoModal");
-  const closeBtn = document.getElementById("closeFotoModal");
   const fotoPreview = document.getElementById("fotoPreview");
   const fotoDateTime = document.getElementById("fotoDateTime");
   const fotoMapDiv = document.getElementById("fotoMap");
@@ -8,7 +7,6 @@ document.addEventListener("DOMContentLoaded", () => {
   let marker = null;
   let defaultZoom = 15;
 
-  closeBtn.addEventListener("click", () => modal.classList.add("hidden"));
   modal.addEventListener("click", e => {
     if (e.target === modal) modal.classList.add("hidden");
   });

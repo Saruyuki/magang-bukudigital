@@ -3,7 +3,6 @@ console.log('surat_upload.js loaded');
 document.addEventListener('DOMContentLoaded', () => {
     const modal = document.getElementById('uploadModal');
     const openBtn = document.getElementById('openUploadModal');
-    const closeBtn = document.getElementById('closeUploadModal');
     const form = document.getElementById('uploadForm');
     const tableBody = document.getElementById('listTableBody');
     const resultBox = document.getElementById('uploadResult');
@@ -11,7 +10,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     openBtn.addEventListener('click', () => modal.classList.remove('hidden'));
 
-    closeBtn.addEventListener('click', () => modal.classList.add('hidden'));
     modal.addEventListener('click', e => {
         if (e.target === modal) modal.classList.add('hidden');
     });

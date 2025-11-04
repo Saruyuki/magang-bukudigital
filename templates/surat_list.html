@@ -48,13 +48,10 @@
                             <td>{{ surat.kunjungan.count }}</td>
                             <td class="text-center gap-2">
                                 <button class="show-btn px-2 py-1 rounded" style="background-color: #ffe600ff;" data-file="{{ surat.file.url }}">
-                                    <img src="{% static "image/eye.png" %} " style="size:20px; height:20px;" >
-                                </button>
-                                <button class="edit-btn px-2 py-1 rounded" style="background-color: #008000;">
-                                    <img src="{% static "image/pen-2.png" %} " style="size:20px; height:20px;" >
+                                    <img src="{% static "image/eye.png" %} " style="width:20px; height:20px;" >
                                 </button>
                                 <button class="delete-btn px-2 py-1 rounded" style="background-color: #dc143c;">
-                                    <img src="{% static "image/trash.png" %} " style="size:20px; height:20px;" >
+                                    <img src="{% static "image/trash.png" %} " style="width:20px; height:20px;" >
                                 </button>
                             </td>
                         </tr>
@@ -85,17 +82,12 @@
         </div>
     </div>
 
-    <div id="uploadModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+    <div id="uploadModal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
         <div class="bg-white rounded-lg shadow-lg w-full max-w-lg p-6 relative">
-            <button id="closeUploadModal" class="absolute top-3 right-2 text-gray-500 hover:text-gray-700">&times;</button>
             <h2 class="text-xl font-semibold mb-4 text-gray-700">Upload Surat Tugas (PDF)</h2>
 
             <form id="uploadForm" method="post" action="{% url "upload_surat" %}" enctype="multipart/form-data" class="space-y-4">
                 {% csrf_token %}
-                <div>
-                    <label class="block font-semibold mb-1">Nomor Surat</label>
-                    <input type="text" name="no_surat" class="border rounded w-full p-2" placeholder="Masukkan nomor surat" required>
-                </div>
                 <div>
                     <label class="block font-semibold mb-1">File Surat (PDF)</label>
                     <input type="file" name="file" class="border rounded w-full p-2" required>

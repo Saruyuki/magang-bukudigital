@@ -19,13 +19,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 console.warn("Browser does not support camera API");
             }
         } catch (err) {
-            alert("Tidak dapat mengakses kamera. Harap izinkan akses kamera di browser Anda.");
+            showNotif("Tidak dapat mengakses kamera. Harap izinkan akses kamera di browser Anda.");
         }
     }
 
     async function requestLocation() {
         if (!navigator.geolocation) {
-            alert("Browser tidak mendukung GPS.");
+            showNotif("Browser tidak mendukung GPS.");
             return;
         }
 
@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
             },
             err => {
                 console.warn("Location denied:", err);
-                alert("Tidak dapat mengambil lokasi. Harap aktifkan GPS.");
+                showNotif("Tidak dapat mengambil lokasi. Harap aktifkan GPS.");
                 if (locStatus) {
                     locStatus.textContent = "Gagal mengambil lokasi";
                 }
@@ -66,7 +66,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const fd = new FormData(form);
         const photo = photoInput.files[0];
         if (!photo) {
-            alert("Ambil foto kunjungan terlebih dahulu!");
+            showNotif("Ambil foto kunjungan terlebih dahulu!");
             return;
         }
         fd.append("foto_kunjungan", photo);
@@ -82,12 +82,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 modal.style.display = "flex";
                 form.reset();
             } else {
-                alert("Gagal mengirim form. Coba lagi.");
+                showNotif("Gagal mengirim form. Coba lagi.");
                 console.error(data.errors || data.error);
             }
         } catch (err) {
             console.error("Network error:", err);
-            alert("Terjadi kesalahan jaringan.");
+            showNotif("Terjadi kesalahan jaringan.");
         }
     });
 

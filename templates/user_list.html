@@ -3,60 +3,78 @@
 
 {% block title %}Manajemen Pengguna{% endblock %}
 
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static "css/table_list.css" %}">
+    <link rel="stylesheet" href="{% static "css/user_list.css" %}">
+{% endblock  %}
+
+{% block page_title %}Daftar Pengurus{% endblock  %}
+
 {% block content %}
-    <div class="p-6">
-        <h2 class="text-2xl font-semibold mb-4">Tambah Pengguna</h2>
+    <div class="card">
+        <div class="list-table-container p-4">
+            <div class="controls mb-4 flex flex-wrap gap-4 items-center">
+                <input type="text" id="searchInput" placeholder="Cari..." class="search-input border rounded px-3 py-1" style="border_color: #3051a0;">
 
-        <form method="POST">
-            {% csrf_token %}
-            {{ single_form.as_p }}
-            <button type="submit" name="single_submit" class="bg-blue-600 text-white px-4 py-2 rounded">Tambah User</button>
-        </form>
+                <button id="openRegisterModal" class=" hover:bg-blue-700 text-white px-4 py-2 rounded shadow" style="background-color: #3051a0;">
+                    + Tambah Pengguna
+                </button>
+            </div>
 
-        <hr class="my-6">
-
-        <h2 class="text-2xl font-semibold mb-4">Unggah Banyak Pengguna</h2>
-        <form method="POST" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ bulk_form.as_p }}
-            <button type="submit" name="bulk_submit" class="bg-green-600 text-white px-4 py-2 rounded">Unggah File</button>
-        </form>
-
-        <hr class="my-6">
-
-        <h2 class="text-2xl font-semibold mb-4">Daftar Pengguna</h2>
-        <table class="table-auto w-full border-collapse border">
+        <table id="listTable" class="list-table border-collapse w-full text-left">
             <thead>
-                <tr class="bg-gray-100 border">
-                    <th class="border px-4 py-2">Username</th>
-                    <th class="border px-4 py-2">Nama</th>
-                    <th class="border px-4 py-2">Jabatan</th>
-                    <th class="border px-4 py-2">Role</th>
-                    <th class="border px-4 py-2">Aksi</th>
+                <tr>
+                    <th data-column="username" class="sortable" style="background: #3051a0; color: white;">Username</th>
+                    <th data-column="nama" class="sortable" style="background: #3051a0; color: white;">Nama</th>
+                    <th data-column="jabatan" class="sortable" style="background: #3051a0; color: white;">Jabatan</th>
+                    <th data-column="role" class="sortable" style="background: #3051a0; color: white;">Role</th>
+                    <th style="background: #3051a0; color: white;">Action</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="listTableBodyFull" class="hidden">
                 {% for user in users %}
                 <tr>
-                    <td class="border px-4 py-2">{{ user.username }}</td>
-                    <td class="border px-4 py-2">{{ user.nama }}</td>
-                    <td class="border px-4 py-2">{{ user.jabatan }}</td>
-                    <td class="border px-4 py-2">{{ user.role }}</td>
-                    <td class="border px-4 py-2 text-center">
-                         <button class="bg-yellow-500 text-white px-3 py-1 rounded" onclick="openEditUser('{{ user.id }}')">Edit</button>
-                         <button class="bg-red-600 text-white px-3 py-1 rounded ml-2" onclick="deleteUser('{{ user.id }}')">Hapus</button>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.nama }}</td>
+                    <td>{{ user.jabatan }}</td>
+                    <td>{{ user.role }}</td>
+                    <td class="text-center gap-2">
+                         <button class="bg-green-500 text-white px-2 py-2 rounded" onclick="openEditUser('{{ user.id }}')">
+                            <img src="{% static "image/pen-2.png" %}" style="size:20px; height:20px;">
+                         </button>
+                         <button class="bg-red-600 text-white px-2 py-2 rounded ml-2" onclick="deleteUser('{{ user.id }}')">
+                            <img src="{% static "image/trash.png" %}" style="size:20px; height:20px;">
+                         </button>
                     </td>
                 </tr>
                 {% empty %}
                 <tr><td colspan="5" class="text-center py-4">Belum ada pengguna.</td></tr>
                 {% endfor %}
             </tbody>
+
+            <tbody id="listTableBody">
+
+            </tbody>
         </table>
+
+        <div id="pagination-controls">
+            View
+            <select id="rowsPerPageSelect">
+                <option value="5">5</option>
+                <option value="10" selected>10</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="all">All</option>
+            </select>
+            from <span id="totalRecords">0</span> records
+        </div>
+
+        <div id="pagination" class="pagination mt-4 flex justify-end gap-2"></div>
     </div>
 
-    <div id="editUserModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div id="editUserModal" class="modal hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6 relative">
-            <button id="closeEditUserModal" class="absolute top-2 right-2 text-gray-600 hover:text-gray-800">&times;</button>
             <h2 class="text-xl font-semibold mb-4">Edit User</h2>
 
             <form id="editUserForm">
@@ -88,12 +106,57 @@
             </form>
         </div>
     </div>
+
+    <div id="registerModal" class="modal register-form hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-lg p-6 relative">
+            <h2 class="text-2xl font-semibold mb-4 text-center">Tambah Pengguna</h2>
+
+            <div class="flex justify-center mb-6">
+                <button id="showSingleFormBtn" class="tab-btn bg-blue-600 text-white px-4 py-2 rounded-1">Single User</button>
+                <button id="showBulkFormBtn" class="tab-btn bg-gray-300 text-gray-800 px-4 py-2 rounded-1">Bulk Form</button>
+            </div>
+
+            <form method="POST" id="singleUserForm" class="mb-6">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+
+                {% for field in single_form %}
+                    <div class="mb-4">
+                        <div class="form-row">
+                            <label for="{{ field.id_for_label}}">{{ field.label }}</label>
+                            <span class="colon">:</span>
+                            {{ field }}
+                        </div>
+                        {% if field.errors %}
+                            <div class="text-red-500">{{ field.errors|striptags }}</div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+                <div class="flex justify-center mt-4">
+                    <button type="submit" name="single_submit" class="bg-blue-600 text-white px-4 py-2 rounded">Tambah User</button>
+                </div>
+            </form>
+
+            <form method="POST" enctype="multipart/form-data" id="bulkUserForm" class="hidden">
+                {% csrf_token %}
+                <div>
+                    <label class="data-pengurus block font-semibold mb-1 align-left">File Data Pengguna (.csv atau .xlsx)</label>
+                    <input type="file" id="file" name="file" accept=".csv, .xlsx" class="border rounded w-full p-2" required>
+                </div>
+
+                <div class="flex justify-center mt-4">
+                    <button type="submit" name="bulk_submit" class="bg-blue-600 text-white px-4 py-2 rounded">Unggah File</button>
+                </div>
+            </form>
+        </div>
+    </div>
 {% endblock %}
 
 {% block extra_script %}
     <script>
         window.editUserUrlPattern = "{% url "edit_user" 0 %}".replace('0/', '');
     </script>
+    <script src="{% static "js/table_list.js" %}"></script>
     <script src="{% static 'js/user_list.js' %}"></script>
 {% endblock %}
 

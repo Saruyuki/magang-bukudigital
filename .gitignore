@@ -1,0 +1,49 @@
+# Created by venv; see https://docs.python.org/3/library/venv.html
+
+# === Python ===
+__pycache__/
+*.py[cod]
+*$py.class
+
+# === Virtual environments ===
+venv/
+env/
+.venv/
+
+# === Django / SQLite ===
+db.sqlite3
+*.sqlite3
+
+# === Media and static files ===
+/media/
+/staticfiles/
+/static/*.map
+*.log
+
+# === Compiled / temporary ===
+*.bak
+*.tmp
+*.swp
+*.DS_Store
+Thumbs.db
+
+# === Git / IDE / cache ===
+.git/
+.idea/
+.vscode/
+management/
+utils/
+
+# === Zip / archives ===
+*.zip
+*.tar
+*.gz
+
+# === Python build ===
+build/
+dist/
+*.egg-info/
+
+# === Custom additions ===
+
+# Add any additional folders you don't want tracked

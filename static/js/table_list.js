@@ -15,12 +15,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const rowsPerPageSelect = document.getElementById('rowsPerPageSelect');
     const totalRecordsSpan = document.getElementById('totalRecords');
 
-    let rowsPerPage = rowsPerPageSelect.value === 'all' ? Infinity : parseInt(rowsPerPageSelect.value, 10);
+    let rowsPerPage = rowsPerPageSelect?.value === 'all' ? Infinity : parseInt(rowsPerPageSelect?.value, 10);
     let currentPage = 1;
     let currentSort = { column: null, direction: null};
     let filteredRows =[...rows];
 
-    console.log(`✅ table_list.js initialized with ${rows.length} rows`);
+    console.log(`table_list.js initialized with ${rows.length} rows`);
 
     function getCellValue(row, column) {
         const headers = Array.from(table.querySelectorAll('thead th'));
@@ -131,28 +131,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    function applySearchFilter() {
-        const searchTerm = searchInput.value.trim().toLowerCase();
-        if (!searchTerm) {
-            filteredRows = [...rows];
-            return;
-        }
-        filteredRows = rows.filter(row => {
-            return Array.from(row.cells).some(td => td.innerText.toLowerCase().includes(searchTerm));
-        });
-    }
-
-    filterColumnSelect.addEventListener('change', () => {
+    if (filterColumnSelect) filterColumnSelect.addEventListener('change', () => {
         applyFilter();
     });
 
-    searchInput.addEventListener('input', () => {
+    if (searchInput) searchInput.addEventListener('input', () => {
         applyFilter();
     })
 
     function applyFilter() {
-        const searchTerm = searchInput.value.trim().toLowerCase();
-        const filterCol = filterColumnSelect.value;
+        const searchTerm = searchInput?.value.trim().toLowerCase();
+        const filterCol = filterColumnSelect?.value;
 
         if (!searchTerm) {
             filteredRows = [...rows];
@@ -179,8 +168,8 @@ document.addEventListener('DOMContentLoaded', () => {
         totalRecordsSpan.textContent = filteredRows.length;
     }
 
-    rowsPerPageSelect.addEventListener('change', () => {
-        const value = rowsPerPageSelect.value;
+    if (rowsPerPageSelect) rowsPerPageSelect.addEventListener('change', () => {
+        const value = rowsPerPageSelect?.value;
         rowsPerPage = value === 'all' ? filteredRows.length : parseInt (value, 10);
         currentPage = 1;
         renderTable();
@@ -206,7 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const res = await fetch(`/surat/${suratId}/edit`, {
                 method: 'POST',
                 headers: {
-                    'X-CSRDToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
                     'Content-Type': 'application/x-www-form-urlencoded'
                 },
                 body: `no_surat=${encodeURIComponent(newNo)}`
@@ -214,25 +203,26 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await res.json();
             if (data.success) {
                 row.cells[0].innerText = data.no_surat;
-                alert('Nomor surat berhasil diperbarui');
+                showNotif('Nomor surat berhasil diperbarui');
             } else {
-                alert(data.error || 'Gagal memperbarui no surat.');
+                showNotif(data.error || 'Gagal memperbarui no surat.');
             }
         }
 
         if (e.target.classList.contains('delete-btn')) {
-            if (!confirm ("Hapus Surat Ini?")) return;
-            const res = await fetch(`/surat/${suratId}/delete`, {
-                method: 'POST',
-                headers: { 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value },
+            showConfirm("Hapus Surat Ini?", async () => {
+                const res = await fetch(`/surat/${suratId}/delete`, {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value },
+                });
+                const data = await res.json()
+                if (data.success) {
+                    row.remove();
+                    showNotif('Surat berhasil dihapus.');
+                } else {
+                    showNotif('Gagal menghapus surat.');
+                }
             });
-            const data = await res.json()
-            if (data.success) {
-                row.remove();
-                alert('Surat berhasil dihapus.');
-            } else {
-                alert('Gagal menghapus surat.');
-            }
         }
     });
 })
