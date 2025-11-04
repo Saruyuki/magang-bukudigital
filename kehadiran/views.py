@@ -1,8 +1,10 @@
 from django.shortcuts import render
 from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
 from .forms import KehadiranForm
 
-# Create your views here.
+
+@login_required
 def kehadiran_form(request):
     if request.method == 'POST':
         form = KehadiranForm(request.POST, user=request.user)

@@ -28,6 +28,31 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
+  window.deleteUser = async function (userId) {
+    if (!confirm("Apakah Anda yakin ingin menghapus akun ini?")) return;
+
+    try {
+      const res = await fetch(`/user/${userId}/delete/`, {
+        method: 'POST',
+        headers: { 
+          'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        }
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        alert('Pengguna berhasil dihapus.');
+        location.reload();
+      } else {
+        alert(data.error || 'Gagal menghapus pengguna.')
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Terjadi kesalahan jaringan.');
+    }
+  };
+
   form.addEventListener('submit', async e => {
     e.preventDefault();
     const userId = document.getElementById('editUserId').value;

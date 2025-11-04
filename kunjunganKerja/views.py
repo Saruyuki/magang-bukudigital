@@ -8,14 +8,11 @@ from datetime import datetime
 
 # Create your views here.
 
-def is_admin(user):
-    return user.role == 'admin'
-
 @login_required
 def kunjungan_form(request, pk):
     kunjungan = get_object_or_404(Kunjungan, pk=pk)
     
-    if kunjungan.user != request.user and not request.user.role == 'admin' :
+    if kunjungan.user != request.user :
         return HttpResponseForbidden("Anda tidak memiliki akses ke form ini.")
     
     if request.method == 'POST':
@@ -23,7 +20,7 @@ def kunjungan_form(request, pk):
         if form.is_valid():
             obj = form.save(commit=False)
             obj.submitted_at = datetime.now()
-            obj.foto_kegiatan = request.FILES.get('foto_kegiatan')
+            obj.foto_kunjungan = request.FILES.get('foto_kunjungan')
             obj.foto_lat = request.POST.get('client_lat') or obj.foto_lat
             obj.foto_lon = request.POST.get('client_lon') or obj.foto_lon
             obj.foto_datetime = request.POST.get('client_photo_dt') or obj.foto_datetime

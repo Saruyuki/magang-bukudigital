@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% load static %}
+{% load l10n %}
+
+{% block title %}Profil Saya{% endblock  %}
+
+{% block content %}
+  <div class="p-6 space-y-6">
+    <div class="flex flex-col md:flex-row gap-6 items-center">
+      <img src="{% static 'image/account.png' %}" alt="Profile Photo" class="w-32 h-32 rounded-full border-4 border-blue-500 object-cover">
+      <div>
+        <h2 class="text-2xl font-semibold">{{ user.nama }}</h2>
+        <p class="text-gray-600">{{ user.jabatan }}</p>
+        <p class="text-gray-500 italic mt-2">@{{ user.username }}</p>
+
+        <button id="changePassBtn" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded">
+            Ubah Password
+        </button>
+      </div>
+    </div>
+
+    <div>
+      <h3 class="text-xl font-semibold mb-3">Jadwal Kunjungan</h3>
+      {% if kunjungan_list %}
+        <div class="flex flex-col gap-2">
+          {% for kunjungan in kunjungan_list %}
+            <div class="p-4 bg-white rounded-lg shadow hover:shadow-md border border-gray-200 transition">
+              <div class="flex justify-between items-center mb-2">
+                <span class="font-bold text-blue-700">{{ kunjungan.tanggal_kunjungan|date:"l, d M Y"|localize }}</span>
+                <span class="text-sm text-gray-500">{{ kunjungan.no_surat }}</span>
+              </div>
+              <p class="font-semibold text-gray-800">{{ kunjungan.tujuan }}</p>
+              <p class="text-gray-600 text-sm mt-1">{{ kunjungan.agenda|truncatewords:15 }}</p>
+              <p class="text-gray-500 text-xs mt-2 italic">Oleh: {{ kunjungan.nama }} ({{ kunjungan.jabatan }})</p>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="text-gray-500 italic">Tidak ada jadwal kunjungan mendatang.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <div id="changePassModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6 relative">
+      <button id="closePassModal" class="absolute top-2 right-2 text-gray-600 hover:text-gray-800">&times;</button>
+      <h2 class="text-xl font-semibold mb-4">Ubah Password</h2>
+
+      <form id="changePassForm" method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label>Password Lama</label>
+            <input type="password" name="old_password" class="w-full border rounded p-2" required>
+        </div>
+        <div class="mb-3">
+            <label>Password Baru</label>
+            <input type="password" name="new_password1" class="w-full border rounded p-2" required>
+        </div>
+        <div class="mb-3">
+            <label>Konfirmasi Password Baru</label>
+            <input type="password" name="new_password2" class="w-full border rounded p-2" required>
+        </div>
+
+        <div class="flex justify-end gap-2 mt-4">
+            <button type="button" id="cancelPassBtn" class="px-4 py-2 bg-gray-400 text-white rounded">Batal</button>
+            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Simpan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}
+
+{% block extra_script %}
+  <script src={% static "js/profile.js" %}></script>
+{% endblock %}

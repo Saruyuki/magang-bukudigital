@@ -25,27 +25,40 @@
                 <button id="toggleSidebarBtn" class="sidebar-toggle" style="color: white;">=</button>
             </div>
             <nav class="sidebar-nav">
-                <a href="{% url "admin_dashboard" %}" class="sidebar-link">
-                    <span class="sidebar-icon hidden"><img src="/static/image/logo-dashbord.png"></span>
-                    <span class="sidebar-label">Dashboard</span>
-                </a>
-                <a href="{% url "tamu_list" %}" class="sidebar-link">
-                    <span class="sidebar-icon hidden"><img src="/static/image/logo-buku-tamu.png"></span>
-                    <span class="sidebar-label">Daftar Tamu</span>
-                </a>
-                <a href="{% url "pengurus_list" %}" class="sidebar-link">
-                    <span class="sidebar-icon hidden"><img src="/static/image/logo-daftar-pengurus.png"></span>
-                    <span class="sidebar-label">Daftar Kehadiran Pengurus</span>
-                </a>
-                <a href="{% url "kunjungan_list" %}" class="sidebar-link">
-                    <span class="sidebar-icon hidden"><img src="/static/image/logo-kunjungan.png"></span>
-                    <span class="sidebar-label">Daftar Kunjungan</span>
-                </a>
                 {% if user.is_authenticated and user.role == 'admin' %}
+                    <a href="{% url "admin_dashboard" %}" class="sidebar-link">
+                        <span class="sidebar-icon hidden"><img src="/static/image/logo-dashbord.png"></span>
+                        <span class="sidebar-label">Dashboard</span>
+                    </a>
+                    <a href="{% url "tamu_list" %}" class="sidebar-link">
+                        <span class="sidebar-icon hidden"><img src="/static/image/logo-buku-tamu.png"></span>
+                        <span class="sidebar-label">Daftar Tamu</span>
+                    </a>
+                    <a href="{% url "pengurus_list" %}" class="sidebar-link">
+                        <span class="sidebar-icon hidden"><img src="/static/image/logo-daftar-pengurus.png"></span>
+                        <span class="sidebar-label">Daftar Kehadiran</span>
+                    </a>
+                    <a href="{% url "kunjungan_list" %}" class="sidebar-link">
+                        <span class="sidebar-icon hidden"><img src="/static/image/logo-kunjungan.png"></span>
+                        <span class="sidebar-label">Daftar Kunjungan</span>
+                    </a>
                     <a href="{% url "surat_list" %}" class="sidebar-link">
                         <span class="sidebar-icon hidden"><img src="/static/image/logo-surat-tugas.png"></span>
                         <span class="sidebar-label">Daftar Surat Tugas</span>
+                    </a>
+                    <a href="{% url "user_list" %}" class="sidebar-link">
+                        <span class="sidebar-icon hidden"><img src="/static/image/logo-pengurus.png"></span>
+                        <span class="sidebar-label">Daftar Pengurus</span>
                     </a> 
+                {% elif user.is_authenticated and user.role == 'pengurus' %}
+                    <a href="{% url "pengurus_list" %}" class="sidebar-link">
+                        <span class="sidebar-icon hidden"><img src="/static/image/logo-daftar-pengurus.png"></span>
+                        <span class="sidebar-label">Daftar Kehadiran</span>
+                    </a>
+                    <a href="{% url "kunjungan_list" %}" class="sidebar-link">
+                        <span class="sidebar-icon hidden"><img src="/static/image/logo-kunjungan.png"></span>
+                        <span class="sidebar-label">Daftar Kunjungan</span>
+                    </a>
                 {% endif %}
             </nav>
         </aside>
@@ -62,7 +75,7 @@
                     </button>
                     <!-- Dropdown -->
                     <div id="userDropdown" class="user-dropdown hidden">
-                        <a href="#">Profile</a>
+                        <a href="{% url "profile" %}">Profile</a>
                         <a href="{% url "logout" %}">Logout</a>
                     </div>
                 </div>

@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("kunjungan-form");
-    const photoInput = document.getElementById("foto_kegiatan");
+    const photoInput = document.getElementById("foto_kunjungan");
     const takePhotoBtn = document.getElementById("takePhotoBtn");
     const latInput = document.getElementById("client_lat");
     const lonInput = document.getElementById("client_lon");
@@ -66,10 +66,10 @@ document.addEventListener("DOMContentLoaded", () => {
         const fd = new FormData(form);
         const photo = photoInput.files[0];
         if (!photo) {
-            alert("Ambil foto kegiatan terlebih dahulu!");
+            alert("Ambil foto kunjungan terlebih dahulu!");
             return;
         }
-        fd.append("foto_kegiatan", photo);
+        fd.append("foto_kunjungan", photo);
 
         // Submit via AJAX
         try {

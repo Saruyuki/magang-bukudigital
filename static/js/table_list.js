@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
             let valA = getCellValue(a, column);
             let valB = getCellValue(b, column);
 
-            if (['tanggal_kunjungan', 'created_at', 'tanggal_kegiatan', 'tanggal_masuk'].includes(column)) {
+            if (['tanggal_kunjungan', 'created_at', 'tanggal_masuk'].includes(column)) {
                 valA = Date.parse(valA);
                 valB = Date.parse(valB);
             }

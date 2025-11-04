@@ -1,6 +1,7 @@
+from django.contrib import messages
+from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import  user_passes_test, login_required
 from django.views.decorators.http import require_POST
-from django.views.decorators.csrf import csrf_exempt
 from django.utils.timezone import now
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse, HttpResponse
@@ -15,14 +16,18 @@ from kehadiran.models import Kehadiran
 from buku.models import Tamu
 
 from .utils import categorize_keperluan, PROVINCE_ACRONYMS, parse_surat_tugas
+from .forms import SingleUserForm, BulkUserUploadForm
 
 import pandas as pd
 import pdfplumber
+
+User = get_user_model()
 
 def is_admin(user):
     return user.is_authenticated and user.role == 'admin'
 
 @login_required
+@user_passes_test(is_admin)
 def admin_dashboard(request):
     
     today = now().date()
@@ -71,6 +76,7 @@ def admin_dashboard(request):
     })
 
 @login_required
+@user_passes_test(is_admin)
 def tamu_list_view(request):   
     tamu_list = Tamu.objects.all().order_by('-tanggal_kunjungan')
     return render(request, 'tamu_list.html', {'tamu_list': tamu_list})
@@ -85,9 +91,9 @@ def kunjungan_list_view(request):
     user = request.user
     
     if user.role == 'admin':
-        kunjungan_list = Kunjungan.objects.select_related('user', 'surat').order_by('-tanggal_kegiatan')
+        kunjungan_list = Kunjungan.objects.select_related('user', 'surat').order_by('-tanggal_kunjungan')
     else :
-        kunjungan_list = Kunjungan.objects.filter(user=user).select_related('surat').order_by('-tanggal_kegiatan')        
+        kunjungan_list = Kunjungan.objects.filter(user=user).select_related('surat').order_by('-tanggal_kunjungan')        
     
     return render(request, 'kunjungan_list.html', {
         'kunjungan_list': kunjungan_list,
@@ -157,7 +163,7 @@ def surat_upload_view(request):
                         jabatan=jabatan,
                         tujuan=tujuan,
                         agenda=agenda,
-                        tanggal_kegiatan=tanggal
+                        tanggal_kunjungan=tanggal,
                     )
                     created_count += 1
                     
@@ -230,3 +236,94 @@ def surat_debug_pdfplumber(request):
 @user_passes_test(is_admin)
 def surat_debug_page(request):
     return render(request, 'debug_pdfplumber.html')
+
+@login_required
+@user_passes_test(is_admin)
+def user_list(request):
+    single_form = SingleUserForm()
+    bulk_form = BulkUserUploadForm()
+    
+    if request.method == 'POST':
+        if 'single_submit' in request.POST:
+            single_form = SingleUserForm(request.POST)
+            if single_form.is_valid():
+                single_form.save()
+                messages.success(request, 'User berhasil ditambahkan.')
+                return redirect('user_list')
+            
+        elif 'bulk_submit' in request.POST:
+            bulk_form = BulkUserUploadForm(request.POST, request.FILES)
+            if bulk_form.is_valid():
+                file = request.FILES['file']
+                try:
+                    if file.name.endswith('.csv'):
+                        df = pd.read_csv(file)
+                    else:
+                        df = pd.read_excel(file)
+                        
+                    for _, row in df.iterrows():
+                        username = str(row['username']).strip()
+                        password = str(row['password']).strip()
+                        nama = str(row.get('nama', '')).strip()
+                        jabatan = str(row.get('jabatan', '')).strip()
+                        role = str(row.get('role', 'pengurus')).strip()
+                        
+                        if not User.objects.filter(username=username).exists():
+                            user = User(username=username, nama=nama, jabatan=jabatan, role=role)
+                            user.set_password(password)
+                            user.save()
+                            
+                        messages.success(request, 'Data pengguna berhasil diunggah.')
+                        return redirect('user_list')
+                
+                except Exception as e:
+                    messages.error(request, f"Terjadi kesalahan: {e}")
+                    
+    users = User.objects.all()
+    return render(request, 'user_list.html', {
+        'single_form': single_form,
+        'bulk_form': bulk_form,
+        'users': users,
+    })
+    
+@login_required
+@user_passes_test(is_admin)
+def edit_user(request, pk):
+    user = get_object_or_404(User, pk=pk)
+    
+    if request.method == 'POST':
+        nama = request.POST.get('editNama')
+        jabatan = request.POST.get('editJabatan')
+        role = request.POST.get('editRole')
+        
+        if not nama or not jabatan or not role:
+            return JsonResponse({'success': False, 'error': 'Semua field wajib diisi.'})
+        
+        user.nama = nama
+        user.jabatan = jabatan
+        user.role = role
+        
+        user.save()
+        
+        return JsonResponse({'success': True})
+    
+    return JsonResponse({
+        'id': user.id,
+        'nama': user.nama,
+        'jabatan': user.jabatan,
+        'role': user.role,
+    })
+    
+@login_required
+@user_passes_test(is_admin)
+def delete_user(request, pk):
+    user = get_object_or_404(User, pk=pk)
+    
+    if user == request.user:
+        return JsonResponse({'success': False, 'error': 'Anda tidak dapat menghapus akun Anda sendiri.'})
+    
+    if request.method =='POST':
+        user.delete()
+        return JsonResponse({'success': True})
+    
+    return JsonResponse({'success': False, 'error': 'Permintaan tidak valid.'})
