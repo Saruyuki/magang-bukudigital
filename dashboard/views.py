@@ -273,8 +273,8 @@ def user_list(request):
                             user.set_password(password)
                             user.save()
                             
-                        messages.success(request, 'Data pengguna berhasil diunggah.')
-                        return redirect('user_list')
+                    messages.success(request, 'Data pengguna berhasil diunggah.')
+                    return redirect('user_list')
                 
                 except Exception as e:
                     messages.error(request, f"Terjadi kesalahan: {e}")

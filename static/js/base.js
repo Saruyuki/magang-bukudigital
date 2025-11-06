@@ -57,8 +57,10 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     window.addEventListener('click', function (e) {
-        if (!dropdown.contains(e.target) && !userBtn.contains(e.target)) {
-            dropdown.classList.add('hidden');
+        if (dropdown && userBtn) {
+            if (!dropdown?.contains(e.target) && !userBtn?.contains(e.target)) {
+                dropdown.classList.add('hidden');
+            }
         }
     });  
 

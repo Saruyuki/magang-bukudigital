@@ -29,8 +29,8 @@ class Kunjungan(models.Model):
     catatan_kunjungan = models.TextField(blank=True, null=True)
     foto_kunjungan = models.ImageField(upload_to='foto_kunjungan', null=True, blank=True)
     
-    foto_lat = models.DecimalField(max_digits=10, decimal_places=7, null=True, blank=True)
-    foto_lon = models.DecimalField(max_digits=10, decimal_places=7, null=True, blank=True)
+    foto_lat = models.DecimalField(max_digits=12, decimal_places=9, null=True, blank=True)
+    foto_lon = models.DecimalField(max_digits=12, decimal_places=9, null=True, blank=True)
     foto_datetime = models.DateTimeField(null=True, blank=True)
     
     created_at = models.DateTimeField(auto_now_add=True)

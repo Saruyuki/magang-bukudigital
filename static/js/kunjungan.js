@@ -1,27 +1,53 @@
 document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("kunjungan-form");
     const photoInput = document.getElementById("foto_kunjungan");
-    const takePhotoBtn = document.getElementById("takePhotoBtn");
+    const cameraModal = document.getElementById("cameraModal");
+    const openCameraBtn = document.getElementById("openCameraBtn");
+    const captureBtn = document.getElementById("captureBtn");
+    const video = document.getElementById("cameraPreview");
+    const canvas = document.getElementById("snapshotCanvas");
+    const photoPreview = document.getElementById("photoPreview");
     const latInput = document.getElementById("client_lat");
     const lonInput = document.getElementById("client_lon");
     const dtInput = document.getElementById("client_photo_dt");
     const modal = document.getElementById("successModal");
 
     // Hide modal initially
-    modal.style.display = "none";
+    if (modal) modal.style.display = "none";
 
-    async function requestCamera() {
-        try {
-            if (navigator.mediaDevices?.getUserMedia) {
-                await navigator.mediaDevices.getUserMedia({ video: true });
-                console.log("Camera access granted");
-            } else {
-                console.warn("Browser does not support camera API");
-            }
-        } catch (err) {
-            showNotif("Tidak dapat mengakses kamera. Harap izinkan akses kamera di browser Anda.");
+    let stream;
+
+    async function requestPermissions() {
+    try {
+        // Check and ask for camera permission
+        const cameraStatus = await navigator.permissions.query({ name: 'camera' }).catch(() => null);
+        if (cameraStatus && cameraStatus.state === 'denied') {
+            showNotif("Akses kamera ditolak. Harap izinkan kamera di pengaturan browser Anda.");
+            return false;
         }
+
+        // Check and ask for location permission
+        const geoStatus = await navigator.permissions.query({ name: 'geolocation' }).catch(() => null);
+        if (geoStatus && geoStatus.state === 'denied') {
+            showNotif("Akses lokasi ditolak. Harap izinkan lokasi di pengaturan browser Anda.");
+            return false;
+        }
+
+        // Now request actual access to trigger permission popup if needed
+        await navigator.mediaDevices.getUserMedia({ video: true });
+        await new Promise((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(resolve, reject, { enableHighAccuracy: true });
+        });
+
+        console.log("Permissions granted ✅");
+        return true;
+
+    } catch (err) {
+        console.error("Permission request failed:", err);
+        showNotif("Gagal meminta izin kamera atau lokasi. Harap periksa pengaturan browser Anda.");
+        return false;
     }
+}
 
     async function requestLocation() {
         if (!navigator.geolocation) {
@@ -33,12 +59,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         navigator.geolocation.getCurrentPosition(
             pos => {
-                latInput.value = pos.coords.latitude;
-                lonInput.value = pos.coords.longitude;
+                latInput.value = pos.coords.latitude.toFixed(9);
+                lonInput.value = pos.coords.longitude.toFixed(9);
                 dtInput.value = new Date().toISOString();
 
                 if (locStatus) {
-                    locStatus.textContent = `📍 Lokasi: ${pos.coords.latitude.toFixed(5)}, ${pos.coords.longitude.toFixed(5)}`;
+                    locStatus.textContent = `Lokasi: ${latInput.value}, ${lonInput.value}`;
                 }
 
                 console.log("Location captured:", latInput.value, lonInput.value);
@@ -53,11 +79,61 @@ document.addEventListener("DOMContentLoaded", () => {
             { enableHighAccuracy: true, timeout: 10000 }
         );
     }
-
-    takePhotoBtn.addEventListener("click", async () => {
-        await requestCamera();
+    
+    openCameraBtn.addEventListener("click", async () => {
+        const granted = await requestPermissions();
+        if (!granted) return;
+        
+        cameraModal.classList.remove("hidden");
         await requestLocation();
-        photoInput.click(); // open camera or file dialog
+        try {
+            stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            video.srcObject = stream;
+        } catch (err) {
+            showError("Tidak dapat mengakses kamera. Pastikan izin telah diberikan.");
+            console.error(err);
+        }
+    })
+
+    function closeCamera() {
+        cameraModal.classList.add("hidden");
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+        }
+    }
+
+    cameraModal.addEventListener("click", e => {
+        if (e.target === cameraModal) {
+            closeCamera();
+        }
+    });
+
+    captureBtn.addEventListener("click", async () => {
+        if (!stream) return showError("Kamera tidak aktif.");
+
+        const context = canvas.getContext("2d");
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        canvas.toBlob(async blob => {
+            if (!blob) return showError("Gagal mengambil foto.");
+
+            const dataUrl = canvas.toDataURL("image/png");
+            photoPreview.src = dataUrl;
+            photoPreview.style.display = "block";
+            photoPreview.classList.remove("hidden");
+
+            const file = new File([blob], "kunjungan.png", { type: "image/png" });
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+            photoInput.files = dataTransfer.files;
+            
+            closeCamera();
+            console.log("Foto berhasil diambil");
+        }, "image/png")
+
+        
     });
 
     form.addEventListener("submit", async e => {
@@ -98,23 +174,10 @@ document.addEventListener("DOMContentLoaded", () => {
             window.location.href = redirectAfterSubmit;
         }
     });
+
     const okBtn = document.getElementById("modalOkBtn");
     if (okBtn) okBtn.addEventListener("click", () => {
         modal.style.display = "none";
         window.location.href = redirectAfterSubmit;
-    });
-
-    photoInput.addEventListener('change', () => {
-        const file = photoInput.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = e => {
-                const img = document.getElementById('photoPreview');
-                img.src = e.target.result;
-                img.style.display = 'block';
-            };
-            reader.readAsDataURL(file);
-        }
-    })
-    
+    });   
 });

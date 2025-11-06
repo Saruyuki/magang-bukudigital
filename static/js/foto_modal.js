@@ -3,6 +3,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const fotoPreview = document.getElementById("fotoPreview");
   const fotoDateTime = document.getElementById("fotoDateTime");
   const fotoMapDiv = document.getElementById("fotoMap");
+  const fotoCoord = document.getElementById("fotoCoord");
+
   let map = null;
   let marker = null;
   let defaultZoom = 15;
@@ -11,13 +13,19 @@ document.addEventListener("DOMContentLoaded", () => {
     if (e.target === modal) modal.classList.add("hidden");
   });
 
+
+
   window.showFotoModal = function (id, fotoUrl, lat, lon, datetime) {
+
+    console.log("Showing foto modal with:", {id, fotoUrl, lat, lon, datetime});
+    
+    const latNum = parseFloat(lat.toString().replace(",",".")) || 0;
+    const lonNum = parseFloat(lon.toString().replace(",",".")) || 0;
+
     fotoPreview.src = fotoUrl;
     fotoDateTime.textContent = datetime || "Tidak diketahui";
+    fotoCoord.textContent = `Koordinat: ${latNum.toFixed(9)}, ${lonNum.toFixed(9)}`;
     modal.classList.remove("hidden");
-
-    const latNum = parseFloat(lat) || 0;
-    const lonNum = parseFloat(lon) || 0;
 
     if (!map) {
       map = L.map(fotoMapDiv, {

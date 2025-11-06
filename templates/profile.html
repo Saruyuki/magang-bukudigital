@@ -14,7 +14,12 @@
         <p class="text-gray-500 italic mt-2">@{{ user.username }}</p>
 
         <button id="changePassBtn" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded">
-            Ubah Password
+          Ubah Password
+        </button>
+        <button id="kehadiranPengurus" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded">
+          <a href="{% url 'kehadiran_form' %}">
+            Absensi
+          </a>
         </button>
       </div>
     </div>
@@ -28,7 +33,7 @@
               <div class="flex justify-between items-center mb-2">
                 <span class="font-bold text-blue-700">{{ kunjungan.tanggal_kunjungan|date:"l, d M Y"|localize }}</span>
                 <span class="text-sm text-gray-500">{{ kunjungan.no_surat }}</span>
-              </div>
+              </div>  
               <p class="font-semibold text-gray-800">{{ kunjungan.tujuan }}</p>
               <p class="text-gray-600 text-sm mt-1">{{ kunjungan.agenda|truncatewords:15 }}</p>
               <p class="text-gray-500 text-xs mt-2 italic">Oleh: {{ kunjungan.nama }} ({{ kunjungan.jabatan }})</p>

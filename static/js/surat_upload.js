@@ -86,11 +86,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    previewBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        processSurat(true)
-    });
-
     form.addEventListener('submit', (e) => {
         e.preventDefault();
         processSurat(false);

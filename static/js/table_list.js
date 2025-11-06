@@ -225,4 +225,56 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     });
+
+    function openEditCatatanModal(id, catatan) {
+        const modal = document.getElementById("editCatatanModal");
+        const catatanInput = document.getElementById("catatanInput");
+        const kunjunganId = document.getElementById("kunjunganId");
+
+        kunjunganId.value = id;
+        catatanInput.value = catatan || "";
+
+        modal.classList.remove("hidden");
+    }
+
+    document.getElementById("cancelEditCatatan").addEventListener("click", () => {
+        document.getElementById("editCatatanModal").classList.add("hidden");
+    });
+
+    document.getElementById("editCatatanForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const id = document.getElementById("kunjunganId").value;
+        const catatan = document.getElementById("catatanInput").value;
+
+        try {
+            const res = await fetch(`/kunjungan/${id}/edit_catatan/`, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": getCookie("csrftoken"),
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ catatan_kunjungan: catatan }),
+            });
+
+            const data = await res.json();
+            if (data.success) {
+                alert("Catatan berhasil diperbarui!");
+                document.getElementById("editCatatanModal").classList.add("hidden");
+                window.location.reload();
+            } else {
+                alert("Gagal menyimpan catatan.");
+            }
+        } catch (err) {
+            console.error(err);
+            alert("Terjadi kesalahan saat menyimpan catatan.");
+        }
+    });
+
+    // Helper to get CSRF token
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+
 })

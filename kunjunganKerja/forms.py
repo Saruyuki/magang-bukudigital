@@ -17,6 +17,7 @@ class KunjunganForm(forms.ModelForm):
             'tanggal_kunjungan': forms.DateInput(attrs={'readonly': 'readonly', 'class': 'form-control'}),
             'catatan_kunjungan': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         }
+        localized_fields = ()
     
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
